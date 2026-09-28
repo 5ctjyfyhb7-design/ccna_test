@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cisco CCNA (200-301 v1.1) 模擬試験</title>
+    <style>
+        :root {
+            --primary: #049fd9;
+            --secondary: #00bceb;
+            --bg-color: #f4f7f6;
+            --text-color: #333;
+            --box-bg: #fff;
+            --correct-color: #28a745;
+            --wrong-color: #dc3545;
+        }
+        body {
+            font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background: var(--box-bg);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .header-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .question-text {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            white-space: pre-wrap;
+        }
+        .options-container {
+            margin-bottom: 20px;
+        }
+        .option-label {
+            display: block;
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+            font-size: 16px;
+        }
+        .option-label:hover {
+            background-color: #e2e6ea;
+        }
+        .option-label input {
+            margin-right: 15px;
+            transform: scale(1.2);
+        }
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn:hover {
+            background-color: #0380ad;
+        }
+        .btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        .feedback-area {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 4px;
+            display: none;
+        }
+        .feedback-area.correct {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            display: block;
+        }
+        .feedback-area.wrong {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            display: block;
+        }
+        .feedback-title {
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .explanation {
+            margin-top: 10px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .next-btn-container {
+            margin-top: 20px;
+            text-align: right;
+            display: none;
+        }
+        .result-screen {
+            text-align: center;
+        }
+        .score {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+        .multiple-hint {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        .option-label.is-correct {
+            border-color: var(--correct-color);
+            background-color: #e8f5e9;
+            font-weight: bold;
+        }
+        .option-label.is-wrong {
+            border-color: var(--wrong-color);
+            background-color: #ffebee;
+        }
+        .option-explanation {
+            margin-top: 8px;
+            margin-left: 32px;
+            font-size: 13px;
+            font-weight: normal;
+            line-height: 1.5;
+            padding-top: 6px;
+            border-top: 1px dashed rgba(0,0,0,0.15);
+        }
+        .option-explanation-correct {
+            color: #1e7e34;
+        }
+        .option-explanation-wrong {
+            color: #555;
+        }
+        .category-breakdown {
+            margin-top: 30px;
+            text-align: left;
+            border-top: 1px solid #e9ecef;
+            padding-top: 25px;
+        }
+        .category-breakdown h3 {
+            font-size: 18px;
+            margin: 0 0 18px 0;
+            text-align: center;
+            color: var(--text-color);
+        }
+        .category-row {
+            margin-bottom: 16px;
+        }
+        .category-row-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .category-row-name {
+            font-weight: bold;
+        }
+        .category-row-score {
+            color: #555;
+        }
+        .category-bar-bg {
+            background-color: #e9ecef;
+            border-radius: 4px;
+            height: 12px;
+            overflow: hidden;
+        }
+        .category-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.4s;
+        }
+        .category-bar-fill.high { background-color: var(--correct-color); }
+        .category-bar-fill.mid { background-color: #ffc107; }
+        .category-bar-fill.low { background-color: var(--wrong-color); }
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 360px;
+            width: 90%;
+            text-align: center;
+        }
+        .modal-box p {
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .modal-box .btn {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Cisco CCNA (200-301 v1.1) 模擬試験</h1>
+</header>
+
+<div class="container" id="start-screen">
+    <h2 style="text-align:center; margin-top:0;">出題順を選択してください</h2>
+    <p style="text-align:center; color:#555;">問題の順番、選択肢の順番、および一部の数値問題は毎回ランダムに変わります。</p>
+    <div style="display:flex; flex-direction:column; gap:15px; margin-top:25px;">
+        <button class="btn" onclick="startQuiz('category')">カテゴリ順で開始</button>
+        <button class="btn" onclick="startQuiz('random')">ランダムな順番で開始</button>
+        <button class="btn" id="continue-btn" style="background-color:#28a745; display:none;" onclick="resumeQuiz()">続きから回答する</button>
+        <button class="btn" id="reset-btn" style="background-color:#dc3545; display:none;" onclick="resetSavedProgress()">回答をリセットする</button>
+    </div>
+</div>
+
+<div class="container" id="quiz-container" style="display:none;">
+    <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
+        <button class="btn" style="background-color:#6c757d; padding:6px 14px; font-size:13px;" onclick="goHome()">ホームに戻る</button>
+    </div>
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+    <div class="header-info">
+        <span id="question-counter">Question 1 of N</span>
+        <span id="score-counter">Score: 0</span>
+    </div>
+    <div id="category-progress-label" style="margin-top:-12px; margin-bottom:15px; font-size:14px; color:#555;"></div>
+
+    <div id="question-area">
+        <div class="question-text" id="question-text">ここに問題文が表示されます。</div>
+        <div class="multiple-hint" id="multiple-hint" style="display: none;">※複数選択問題です。正しいものをすべて選んでください。</div>
+        <div class="options-container" id="options-container">
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <button class="btn" id="back-btn" style="background-color:#6c757d; display:none;" onclick="prevQuestion()">← 前の設問へ</button>
+            <button class="btn" id="submit-btn" onclick="checkAnswer()">解答する</button>
+        </div>
+    </div>
+
+    <div class="feedback-area" id="feedback-area">
+        <div class="feedback-title" id="feedback-title"></div>
+        <div class="explanation" id="explanation-text"></div>
+    </div>
+
+    <div class="next-btn-container" id="next-btn-container">
+        <button class="btn" id="next-btn" onclick="nextQuestion()">次の問題へ</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="home-modal">
+    <div class="modal-box">
+        <p>ホームに戻りますか？<br>現在の回答内容をどうしますか？</p>
+        <button class="btn" onclick="handleHomeChoice('continue')">続きから回答する（保存する）</button>
+        <button class="btn" style="background-color:#dc3545;" onclick="handleHomeChoice('reset')">回答をリセットする（保存しない）</button>
+        <button class="btn" style="background-color:#6c757d;" onclick="handleHomeChoice('cancel')">キャンセル（戻らない）</button>
+    </div>
+</div>
+
+<div class="container result-screen" id="result-container" style="display: none;">
+    <h2>テスト完了</h2>
+    <p>お疲れ様でした。あなたのスコアは以下の通りです。</p>
+    <div class="score" id="final-score">0 / 0</div>
+    <p id="result-message"></p>
+    <div class="category-breakdown" id="category-breakdown"></div>
+    <button class="btn" onclick="location.reload()">もう一度挑戦する</button>
+</div>
+
+<script>
+    function shuffleArray(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+    }
+    function randInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function randChoice(arr) {
+        return arr[randInt(0, arr.length - 1)];
+    }
+    function randomNetworkForPrefix(prefix) {
+        const hostBits = 24 - prefix;
+        const blockSize = Math.pow(2, hostBits);
+        const totalBlocks = 65536 / blockSize;
+        const blockIndex = randInt(0, totalBlocks - 1);
+        const value16 = blockIndex * blockSize;
+        const second = Math.floor(value16 / 256);
+        const third = value16 % 256;
+        return `10.${second}.${third}.0`;
+    }
+
+    function genSubnetDivision() {
+        const origPrefix = randChoice([20, 21, 22, 23]);
+        const bitsChoices = [1, 2, 3].filter(b => origPrefix + b <= 27);
+        const bits = randChoice(bitsChoices);
+        const splitCount = Math.pow(2, bits);
+        const newPrefix = origPrefix + bits;
+        const network = randomNetworkForPrefix(origPrefix);
+        const candidateSet = new Set();
+        [-1, 1, 2, 3, 4].forEach(offset => {
+            const p = newPrefix + offset;
+            if (p > origPrefix && p <= 30 && p !== newPrefix) candidateSet.add(p);
+        });
+        const distractors = shuffleArray([...candidateSet]).slice(0, 3);
+        const allPrefixes = shuffleArray([newPrefix, ...distractors]);
+        const answerIndex = allPrefixes.indexOf(newPrefix);
+        const optionExplanations = allPrefixes.map(p => {
+            if (p === newPrefix) {
+                return `正解です。/${origPrefix}を${splitCount}つ(2^${bits})に均等分割するには${bits}ビット追加し/${newPrefix}となります。`;
+            }
+            const madeCount = Math.pow(2, p - origPrefix);
+            return `この場合は${madeCount}個のサブネットに分割されてしまうため誤りです。`;
+        });
+        return {
+            q: `「${network}/${origPrefix}」のネットワークをちょうど${splitCount}つの同サイズのサブネットに分割する場合、各サブネットのサブネットマスクはどれになりますか。`,
+            type: "single",
+            options: allPrefixes.map(p => `/${p}`),
+            answer: [answerIndex],
+            explanation: `/${origPrefix}を${splitCount}つ（2^${bits}）に均等分割するには、${bits}ビット分をサブネット部に追加する必要があるため、/${origPrefix}+${bits}=/${newPrefix}となります。`,
+            optionExplanations,
+            category: "fundamentals"
+        };
+    }
+
+    function genLongestMatch() {
+        const thirdOctet = randInt(0, 254);
+        const half25 = randChoice([0, 128]);
+        const quarter26 = half25 + randChoice([0, 64]);
+        const hostOffset = randInt(1, 62);
+        const destIp = `192.168.${thirdOctet}.${quarter26 + hostOffset}`;
+        const routes = [
+            { label: `192.168.${thirdOctet}.0/24 (OSPF)`, prefix: 24 },
+            { label: `192.168.${thirdOctet}.${half25}/25 (RIP)`, prefix: 25 },
+            { label: `192.168.${thirdOctet}.${quarter26}/26 (Static)`, prefix: 26 },
+            { label: `0.0.0.0/0 (Static)`, prefix: 0 }
+        ];
+        const correctIdx = 2;
+        const optionExplanations = routes.map((r, i) => i === correctIdx
+            ? `正解です。ロンゲストマッチの原則により、最も長いプレフィックス(/${r.prefix})を持つこの経路が選択されます。`
+            : (r.prefix === 0
+                ? `0.0.0.0/0はデフォルトルートであり、より具体的な一致経路が存在する場合は使用されないため選択されません。`
+                : `このアドレスを含みますが、より長いプレフィックスの経路が存在するため選択されません。`));
+        return {
+            q: `ルータのルーティングテーブルに以下の経路が存在します。宛先IPアドレスが「${destIp}」のパケットはどの経路に従って転送されますか。\n・${routes[0].label}\n・${routes[1].label}\n・${routes[2].label}\n・${routes[3].label}`,
+            type: "single",
+            options: routes.map(r => r.label),
+            answer: [correctIdx],
+            explanation: `ルータはロンゲストマッチ（最長一致）の原則に従い、宛先IPアドレスと一致するネットワークのうち、プレフィックス長（サブネットマスク）が最も長いルートを優先します。${destIp}は/24, /25, /26 全てに含まれますが、最もプレフィックス長が長い /26 が選ばれます。`,
+            optionExplanations,
+            category: "connectivity"
+        };
+    }
+
+    function genHsrpMac() {
+        const group = randInt(1, 255);
+        const hex = group.toString(16).toUpperCase().padStart(2, "0");
+        const correctMac = `0000.0C07.AC${hex}`;
+        const vrrpMac = `0000.5E00.01${hex}`;
+        const choices = shuffleArray([
+            { mac: correctMac, correct: true },
+            { mac: vrrpMac, correct: false, reason: `${vrrpMac}はVRRPで使用される仮想MACアドレスの形式であり、HSRPのものではないため誤りです。` },
+            { mac: "FFFF.FFFF.FFFF", correct: false, reason: `FFFF.FFFF.FFFFはブロードキャストMACアドレスであり、HSRPの仮想MACアドレスではないため誤りです。` },
+            { mac: "AAAA.AAAA.AAAA", correct: false, reason: `AAAA.AAAA.AAAAはHSRPで規定された仮想MACアドレスの形式ではないため誤りです。` }
+        ]);
+        const answerIndex = choices.findIndex(c => c.correct);
+        return {
+            q: `HSRPにおいて、アクティブルータが応答する仮想MACアドレスの形式として正しいものはどれですか(グループ番号が10進数で${group}、16進数で${hex}の場合)。`,
+            type: "single",
+            options: choices.map(c => c.mac),
+            answer: [answerIndex],
+            explanation: `HSRPの仮想MACアドレスは「0000.0C07.ACxx」という形式で、末尾のxxにHSRPグループ番号(16進数)が入ります。グループ番号が10進数で${group}(16進数で${hex})の場合は「${correctMac}」となります。なお、VRRPの仮想MACアドレスは「0000.5E00.01xx」という異なる形式です。`,
+            optionExplanations: choices.map(c => c.correct ? `正解です。HSRPの仮想MACアドレスは0000.0C07.ACxxの形式で、グループ番号${group}(16進数${hex})の場合は${correctMac}となります。` : c.reason),
+            category: "connectivity"
+        };
+    }
+
+    function genAclWildcard() {
+        const blockBits = randInt(1, 6);
+        const blockSize = Math.pow(2, blockBits);
+        const totalBlocks = 256 / blockSize;
+        const blockIndex = randInt(0, totalBlocks - 1);
+        const thirdOctetStart = blockIndex * blockSize;
+        const thirdOctetEnd = thirdOctetStart + blockSize - 1;
+        const secondOctet = randInt(16, 31);
+        const wildcardThird = blockSize - 1;
+        const network = `172.${secondOctet}.${thirdOctetStart}.0`;
+        const wildcard = `0.0.${wildcardThird}.255`;
+        const correctRange = `${network} ～ 172.${secondOctet}.${thirdOctetEnd}.255`;
+        const narrowEnd = thirdOctetStart + Math.max(0, Math.floor(blockSize / 2) - 1);
+        const narrowRange = `${network} ～ 172.${secondOctet}.${narrowEnd}.255`;
+        const widerBlockSize = blockSize * 2;
+        const widerBlockIndexStart = Math.floor(thirdOctetStart / widerBlockSize) * widerBlockSize;
+        const widerEnd = widerBlockIndexStart + widerBlockSize - 1;
+        const widerRange = `172.${secondOctet}.${widerBlockIndexStart}.0 ～ 172.${secondOctet}.${widerEnd}.255`;
+        const fullSecondOctetRange = `172.${secondOctet}.0.0 ～ 172.${secondOctet}.255.255`;
+        const choices = shuffleArray([
+            { text: correctRange, correct: true },
+            { text: narrowRange, correct: false, reason: `この範囲はワイルドカードマスク${wildcard}が示す範囲(${correctRange})より狭いため誤りです。` },
+            { text: widerRange, correct: false, reason: `この範囲はワイルドカードマスクが示す範囲より広すぎるため誤りです。` },
+            { text: fullSecondOctetRange, correct: false, reason: `この範囲はワイルドカードマスクが示す範囲より広すぎるため誤りです。` }
+        ]);
+        const answerIndex = choices.findIndex(c => c.correct);
+        return {
+            q: `「access-list 10 permit ${network} ${wildcard}」というACL文が許可する対象ネットワークの範囲として正しいものはどれですか。`,
+            type: "single",
+            options: choices.map(c => c.text),
+            answer: [answerIndex],
+            explanation: `ワイルドカードマスク ${wildcard} は、第3オクテットの下位${blockBits}ビットを無視することを意味します。${network}を起点にすると、第3オクテットは${thirdOctetStart}～${thirdOctetEnd}の範囲となり、${correctRange}が対象になります。`,
+            optionExplanations: choices.map(c => c.correct ? `正解です。ワイルドカードマスク${wildcard}は第3オクテットの下位${blockBits}ビットを無視するため、${correctRange}が対象範囲です。` : c.reason),
+            category: "connectivity"
+        };
+    }
+
+    function genRouteSummary() {
+        const pairIndex = randInt(0, 127);
+        const thirdEven = pairIndex * 2;
+        const net1 = `192.168.${thirdEven}.0/24`;
+        const net2 = `192.168.${thirdEven + 1}.0/24`;
+        const summary = `192.168.${thirdEven}.0/23`;
+        const wideBase = Math.floor(thirdEven / 4) * 4;
+        const wrongWide = `192.168.${wideBase}.0/22`;
+        const wrongSameButOtherBase = `192.168.${thirdEven + 1}.0/23`;
+        const wrongNarrow = `192.168.${thirdEven}.0/25`;
+        const choices = shuffleArray([
+            { text: summary, correct: true },
+            { text: wrongWide, correct: false, reason: `この範囲は192.168.${wideBase}.0～192.168.${wideBase + 3}.255までを含む広すぎる範囲のため誤りです。` },
+            { text: wrongSameButOtherBase, correct: false, reason: `サマリーアドレスはこの2つのネットワークの共通範囲の先頭アドレスを使うため、${wrongSameButOtherBase}という表記は誤りです。` },
+            { text: wrongNarrow, correct: false, reason: `/25では${net1}全体をカバーできないため誤りです。` }
+        ]);
+        const answerIndex = choices.findIndex(c => c.correct);
+        return {
+            q: `「${net1}」と「${net2}」の2つのネットワークを、ルーティングテーブルの経路数を減らすために1つにまとめて広告する経路集約（サマリー）として正しいものはどれですか。`,
+            type: "single",
+            options: choices.map(c => c.text),
+            answer: [answerIndex],
+            explanation: `${net1}と${net2}は連続する2つの/24ネットワークであり、上位23ビットが共通しているため、${summary}として1つに集約できます。`,
+            optionExplanations: choices.map(c => c.correct ? `正解です。${net1}と${net2}は上位23ビットが共通しており、${summary}に集約できます。` : c.reason),
+            category: "automation"
+        };
+    }
+
+    function genHostCount() {
+        const prefix = randInt(25, 29);
+        const hostBits = 32 - prefix;
+        const totalAddr = Math.pow(2, hostBits);
+        const usableHosts = totalAddr - 2;
+        const thirdOctet = randInt(0, 255);
+        const network = `192.168.${thirdOctet}.0/${prefix}`;
+        const candidateSet = new Set();
+        [prefix - 1, prefix + 1].forEach(p => {
+            if (p >= 24 && p <= 30 && p !== prefix) candidateSet.add(Math.pow(2, 32 - p) - 2);
+        });
+        candidateSet.add(totalAddr);
+        candidateSet.delete(usableHosts);
+        let distractorVals = shuffleArray([...candidateSet]).slice(0, 3);
+        let fallback = 1;
+        while (distractorVals.length < 3) {
+            const extra = usableHosts + fallback * 2;
+            if (!distractorVals.includes(extra)) distractorVals.push(extra);
+            fallback++;
+        }
+        const allVals = shuffleArray([usableHosts, ...distractorVals]);
+        const answerIndex = allVals.indexOf(usableHosts);
+        const optionExplanations = allVals.map(v => {
+            if (v === usableHosts) return `正解です。/${prefix}は2^${hostBits}-2=${usableHosts}ホストが割り当て可能です。`;
+            if (v === totalAddr) return `${v}はネットワークアドレスとブロードキャストアドレスを引く前の総アドレス数のため誤りです。`;
+            return `${v}は/${prefix}のホスト数ではないため誤りです。`;
+        });
+        return {
+            q: `「${network}」のサブネットにおいて、割り当て可能なホストアドレスの最大数はいくつですか。`,
+            type: "single",
+            options: allVals.map(String),
+            answer: [answerIndex],
+            explanation: `/${prefix}は32-${prefix}=${hostBits}ビットがホスト部です。2^${hostBits}=${totalAddr}個のアドレスのうち、ネットワークアドレスとブロードキャストアドレスを除いた ${totalAddr}-2=${usableHosts} が割り当て可能なホスト数です。`,
+            optionExplanations,
+            category: "automation"
+        };
+    }
+
+    function genOspfWildcard() {
+        const o1 = randInt(1, 223);
+        const o2 = randInt(0, 255);
+        const o3 = randInt(0, 255);
+        const hostOctet = randInt(1, 254);
+        const ip = `${o1}.${o2}.${o3}.${hostOctet}`;
+        const network = `${o1}.${o2}.${o3}.0`;
+        const area = randInt(0, 3);
+        const correctCmd = `network ${network} 0.0.0.255 area ${area}`;
+        const wrongSubnetMask = `network ${network} 255.255.255.0 area ${area}`;
+        const wrongFullHostMask = `network ${ip} 255.255.255.255 area ${area}`;
+        const wrongRouterOspf = `router ospf ${network} area ${area}`;
+        const choices = shuffleArray([
+            { text: correctCmd, correct: true },
+            { text: wrongSubnetMask, correct: false, reason: `OSPFのnetworkコマンドはサブネットマスクではなくワイルドカードマスクを使用するため、この記述は誤りです。` },
+            { text: wrongFullHostMask, correct: false, reason: `255.255.255.255はサブネットマスク形式であり、またOSPFのnetworkコマンドではワイルドカードマスクを使うため誤りです。` },
+            { text: wrongRouterOspf, correct: false, reason: `router ospfコマンドの後にはプロセスIDを指定します。ネットワークアドレスを直接指定する形式ではないため誤りです。` }
+        ]);
+        const answerIndex = choices.findIndex(c => c.correct);
+        return {
+            q: `ルータのインターフェース上でOSPFを有効化し、エリア${area}に割り当てるためのネットワークコマンドとして正しいものはどれですか。IPアドレスは ${ip}/24 とします。`,
+            type: "single",
+            options: choices.map(c => c.text),
+            answer: [answerIndex],
+            explanation: `OSPFのnetworkコマンドでは、ワイルドカードマスクを使用して対象のネットワークを指定します。/24 (255.255.255.0) のワイルドカードマスクは 0.0.0.255 となります。`,
+            optionExplanations: choices.map(c => c.correct ? `正解です。/24 (255.255.255.0)に対応するワイルドカードマスクは0.0.0.255です。` : c.reason),
+            category: "connectivity"
+        };
+    }
+
+    const questions = [
+        {"q": "EIGRPのデフォルトのメトリック計算に使用される要素を2つ選択してください。", "type": "multiple", "options": ["帯域幅 (Bandwidth)", "ホップ数のみ", "遅延 (Delay)", "パケット損失率", "IPアドレスの値"], "answer": [0, 2], "explanation": "EIGRPのメトリックはデフォルトで帯域幅と遅延の値を基に計算されます（信頼性や負荷はデフォルトでは使用されません）。RIPはホップ数のみを基準とします。", "optionExplanations": ["正解です。帯域幅はEIGRPのデフォルトメトリック計算に使用されます。", "ホップ数のみを使用するのはRIPの特徴であり、EIGRPのデフォルトメトリックとは異なるため誤りです。", "正解です。遅延はEIGRPのデフォルトメトリック計算に使用されます。", "パケット損失率はEIGRPのデフォルトメトリック計算には使用されないため誤りです。", "IPアドレスの値はメトリック計算には使用されないため誤りです。"], "category": "connectivity"},
+        {"q": "OSPFのデフォルトのHelloインターバルとDeadインターバルの組み合わせとして正しいものはどれですか（ブロードキャストネットワークの場合）。", "type": "single", "options": ["Hello:5秒 Dead:15秒", "Hello:10秒 Dead:40秒", "Hello:30秒 Dead:120秒", "Hello:60秒 Dead:180秒"], "answer": [1], "explanation": "OSPFのデフォルトタイマーは、ブロードキャストおよびポイントツーポイントネットワークでHelloインターバルが10秒、Deadインターバルはその4倍の40秒です。", "optionExplanations": ["Hello:5秒/Dead:15秒はOSPFのデフォルト値ではないため誤りです。", "正解です。ブロードキャストネットワークにおけるOSPFのデフォルトはHello:10秒、Dead:40秒です。", "Hello:30秒/Dead:120秒はOSPFのデフォルト値ではないため誤りです。", "Hello:60秒/Dead:180秒はOSPFのデフォルト値ではないため誤りです。"], "category": "connectivity"},
+        {"q": "OSPFにおけるインターフェースコストの計算式として正しいものはどれですか。", "type": "single", "options": ["インターフェース帯域幅 ÷ 基準帯域幅(デフォルト100Mbps)", "基準帯域幅(デフォルト100Mbps) ÷ インターフェース帯域幅", "インターフェース帯域幅 × ホップ数", "基準帯域幅 × インターフェース遅延"], "answer": [1], "explanation": "OSPFのデフォルトのコストは「基準帯域幅(Reference Bandwidth、デフォルトでは100Mbps) ÷ インターフェースの帯域幅」で計算されます。帯域幅が大きいほどコストは小さくなり、優先されやすくなります。", "optionExplanations": ["この式は分子と分母が逆であり、正しい計算式ではないため誤りです。", "正解です。OSPFのコストは基準帯域幅をインターフェース帯域幅で割ることで算出されます。", "ホップ数を用いるのはRIPの考え方であり、OSPFのコスト計算式ではないため誤りです。", "この式はOSPFの標準的なコスト計算式ではないため誤りです。"], "category": "connectivity"},
+        {"q": "EtherChannel (リンクアグリゲーション) を構成する際のネゴシエーションプロトコルであるLACPの標準規格はどれですか。", "type": "single", "options": ["IEEE 802.1D", "IEEE 802.1Q", "IEEE 802.1X", "IEEE 802.3ad"], "answer": [3], "explanation": "LACP (Link Aggregation Control Protocol) はIEEE 802.3ad（後に802.1AXに移行）で標準化されたプロトコルです。PAgPはCisco独自のプロトコルです。", "optionExplanations": ["IEEE 802.1DはSTP(スパニングツリー)の標準規格のため誤りです。", "IEEE 802.1QはVLANトランキングの標準規格のため誤りです。", "IEEE 802.1Xはポートベース認証の標準規格のため誤りです。", "正解です。LACPはIEEE 802.3ad（後に802.1AXに移行）で標準化されています。"], "category": "access"},
+        {"generate": genSubnetDivision},
+        {"q": "拠点間のネットワークを、インターネットなどの公衆網を経由して暗号化されたトンネルで常時接続するVPNの種類はどれですか。", "type": "single", "options": ["リモートアクセスVPN", "サイト間VPN (Site-to-Site VPN)", "SSL VPN", "クライアントレスVPN"], "answer": [1], "explanation": "サイト間VPNは、本社と支社のような固定された拠点同士のルータやファイアウォールの間で常時確立される暗号化トンネルであり、両拠点のネットワーク全体を透過的に接続します。", "optionExplanations": ["リモートアクセスVPNは個々のユーザー端末から社内網へ接続する方式であり、拠点間接続とは異なるため誤りです。", "正解です。サイト間VPNは拠点間を常時接続する暗号化トンネルです。", "SSL VPNはリモートアクセスVPNの一形態であり、拠点間の常時接続を指す用語ではないため誤りです。", "クライアントレスVPNもリモートアクセス型の一種であり、拠点間接続を指す用語ではないため誤りです。"], "category": "security"},
+        {"q": "TCPとUDPの特性の比較として正しいものを2つ選択してください。", "type": "multiple", "options": ["TCPはコネクションレス型のプロトコルである", "UDPは信頼性の高いデータ転送を提供する", "TCPはスリーウェイハンドシェイクを使用して通信を確立する", "UDPはオーバーヘッドが少なく、リアルタイム通信に適している", "TCPはウィンドウサイズによるフロー制御を行わない"], "answer": [2, 3], "explanation": "TCPはコネクション型で通信を確立し、信頼性の高い転送を提供します。UDPはコネクションレス型でオーバーヘッドが少なく、VoIPなどのリアルタイム通信に適しています。", "optionExplanations": ["TCPはコネクション型のプロトコルです。コネクションレス型という記述は誤りです。", "信頼性の高い転送を提供するのはTCPです。UDPは信頼性を保証しないため誤りです。", "正解です。TCPはSYN・SYN/ACK・ACKによるスリーウェイハンドシェイクで通信を確立します。", "正解です。UDPはヘッダが簡素でオーバーヘッドが少なく、VoIPなどのリアルタイム通信に適しています。", "TCPはウィンドウサイズを用いたフロー制御を行います。行わないという記述は誤りです。"], "category": "fundamentals"},
+        {"q": "「show ip interface brief」コマンドの出力で、インターフェースのStatusとProtocolが共に「down」と表示される主な原因として最も可能性が高いものはどれですか。", "type": "single", "options": ["インターフェースにshutdownコマンドが実行されている", "物理的なケーブル接続の問題、または対向機器の電源が入っていない", "IPアドレスが誤って設定されている", "VLANの設定が誤っている"], "answer": [1], "explanation": "Status（レイヤ1）とProtocol（レイヤ2）が共にdownの場合、通常は物理層の問題（ケーブル未接続、対向機器のダウンなど）が原因です。なお、管理者による明示的なshutdownの場合は「administratively down」と表示されます。", "optionExplanations": ["shutdownコマンドが実行されている場合は「administratively down」と表示され、単なる「down」とは区別されるため誤りです。", "正解です。StatusとProtocolが共にdownの場合、通常は物理的な接続問題が主な原因です。", "IPアドレスの設定誤りは通常Protocol側の表示に影響しますが、この状態の主な原因としては可能性が低いため誤りです。", "VLAN設定の誤りはこの表示の主な原因としては可能性が低いため誤りです。"], "category": "fundamentals"},
+        {"q": "FHRP (First Hop Redundancy Protocol) の一つであるHSRP (Hot Standby Router Protocol) において、アクティブルータを選出する際に優先される基準は何ですか。", "type": "single", "options": ["最小のプライオリティ値", "最大のプライオリティ値", "最小のMACアドレス", "最大のMACアドレス"], "answer": [1], "explanation": "HSRPでは、最大のプライオリティ値（デフォルト100）を持つルータがアクティブルータとして選出されます。プライオリティが同じ場合は、最大のIPアドレスを持つルータが選ばれます。", "optionExplanations": ["HSRPでは最大のプライオリティ値を持つルータが優先されるため、この記述は誤りです。", "正解です。HSRPでは最大のプライオリティ値（デフォルト100）を持つルータがアクティブルータとして選出されます。", "プライオリティが同じ場合に比較されるのはMACアドレスではなくIPアドレスであり、また最小ではなく最大が優先されるため誤りです。", "プライオリティが同じ場合はIPアドレスが比較され、MACアドレスは基準ではないため誤りです。"], "category": "connectivity"},
+        {"q": "ARP (Address Resolution Protocol) の役割として正しいものはどれですか。", "type": "single", "options": ["ホスト名をIPアドレスに変換する", "IPアドレスをMACアドレスに変換する", "MACアドレスをIPアドレスに変換する", "IPアドレスを自動的に割り当てる"], "answer": [1], "explanation": "ARPは、同一セグメント内で通信を行う際に、宛先のIPアドレスから対応するMACアドレスを解決（取得）するために使用されるプロトコルです。", "optionExplanations": ["ホスト名からIPアドレスへの変換はDNSの役割であり、ARPの役割ではないため誤りです。", "正解です。ARPはIPアドレスから対応するMACアドレスを解決するために使用されます。", "MACアドレスからIPアドレスへの変換はARPの逆方向であるRARPなどの役割のため誤りです。", "IPアドレスの自動割り当てはDHCPの役割であり、ARPの役割ではないため誤りです。"], "category": "fundamentals"},
+        {"q": "PCから特定のWebサーバへの通信ができない場合のトラブルシューティング手順として、OSI下位層から上位層への順序で最も適切なものはどれですか。", "type": "single", "options": ["DNS名前解決の確認 -> pingによる疎通確認 -> 物理ケーブルの確認", "物理ケーブル・リンク状態の確認 -> IP疎通(ping)の確認 -> DNS名前解決の確認 -> アプリケーション(HTTP)の確認", "アプリケーションの確認 -> IPアドレスの確認 -> 物理層の確認", "順序は重要ではなく、どこから確認しても良い"], "answer": [1], "explanation": "効率的なトラブルシューティングでは、一般的にOSI参照モデルの下位層（物理層・データリンク層）から上位層（アプリケーション層）に向かって、または上位層から下位層へと体系的に切り分けを行うボトムアップ/トップダウンアプローチが推奨されます。", "optionExplanations": ["DNS確認を最初に行う順番は、下位層から確認するアプローチとしては適切ではないため誤りです。", "正解です。物理層→IP疎通→DNS→アプリケーションの順に確認するのが、下位層から上位層への体系的なアプローチです。", "アプリケーションの確認を最初に行う順番は、下位層から確認するアプローチとしては適切ではないため誤りです。", "体系的な切り分けのためには順序立てて確認することが重要であり、順序を問わないという記述は適切ではありません。"], "category": "fundamentals"},
+        {"q": "CDP (Cisco Discovery Protocol) の主な目的は何ですか。", "type": "single", "options": ["ルーティングプロトコルのネイバー関係を確立する", "直接接続されているCiscoデバイスの情報を収集・共有する", "ネットワーク全体のトポロジマップを自動生成する", "スイッチ間のVLAN情報を同期する"], "answer": [1], "explanation": "CDPはCisco独自のレイヤ2プロトコルで、直接接続されたCisco機器のホスト名、IPアドレス、ポート情報、プラットフォームなどを検出・共有するために使用されます。", "optionExplanations": ["ルーティングプロトコルのネイバー確立はOSPFやEIGRPなど各ルーティングプロトコル自身が行うため誤りです。", "正解です。CDPは直接接続されたCisco機器のホスト名・IPアドレス・ポート情報などを収集・共有します。", "CDPは直接接続機器の情報収集にとどまり、ネットワーク全体のトポロジマップを自動生成する機能ではないため誤りです。", "VLAN情報の同期はVTPの役割であり、CDPの役割ではないため誤りです。"], "category": "access"},
+        {"q": "無線LANクライアントが、あるAPのエリアから別のAPのエリアへ移動しても通信を維持し、接続先APを自動的に切り替える機能を何と呼びますか。", "type": "single", "options": ["ローミング (Roaming)", "フェールオーバー", "ロードバランシング", "チャネルボンディング"], "answer": [0], "explanation": "ローミングは、無線LANクライアントが移動に伴い電波状況の良い別のAPへシームレスに接続を切り替える機能で、同一SSID・同一WLC配下のAP間で実現されます。", "optionExplanations": ["正解です。ローミングはクライアントが移動に伴い、接続先APを自動的に切り替える機能です。", "フェールオーバーは機器障害時の切り替えを指す一般用語であり、この問題の内容とは異なるため誤りです。", "ロードバランシングは負荷分散を指す用語であり、この問題の内容とは異なるため誤りです。", "チャネルボンディングは複数チャネルを束ねて帯域を広げる技術であり、この問題の内容とは異なるため誤りです。"], "category": "security"},
+        {"q": "QoSにおいて、規定の帯域を超過したトラフィックを廃棄せず、一時的にバッファに蓄積して送出タイミングを遅らせる仕組みを何と呼びますか。", "type": "single", "options": ["ポリシング (Policing)", "シェーピング (Shaping)", "マーキング (Marking)", "キューイング (Queuing)"], "answer": [1], "explanation": "シェーピングは超過分のトラフィックをバッファに蓄積し、送出レートを平滑化して規定内に収める仕組みです。一方ポリシングは超過分を即座に廃棄（またはマーキング変更）します。", "optionExplanations": ["ポリシングは超過分を即座に廃棄（または再マーキング）する仕組みであり、バッファに蓄積する仕組みではないため誤りです。", "正解です。シェーピングは超過トラフィックをバッファに蓄積し、送出タイミングを遅らせて平滑化します。", "マーキングはパケットに優先度情報を付与する仕組みであり、この問題の内容とは異なるため誤りです。", "キューイングはパケットの処理順序を制御する仕組みであり、この問題の内容とは異なるため誤りです。"], "category": "access"},
+        {"q": "tracerouteコマンドが経路上の各ホップを特定するために利用する主な仕組みは何ですか。", "type": "single", "options": ["ARP要求を段階的に送信する", "TTL (Time to Live) の値を1から順に増加させながらパケットを送信する", "DNSの逆引きを利用する", "SNMPのポーリングを利用する"], "answer": [1], "explanation": "tracerouteはTTLを1から順に増やしたパケットを送信します。各ルータはTTLが0になったパケットを破棄し「TTL超過」のICMPメッセージを送信元に返すため、この応答から経路上の各ホップのアドレスを特定できます。", "optionExplanations": ["tracerouteはARP要求を段階的に送信する仕組みではないため誤りです。", "正解です。tracerouteはTTLを1から順に増加させ、各ルータからのTTL超過メッセージを利用して経路を特定します。", "tracerouteの基本的な仕組みはDNS逆引きに依存するものではないため誤りです（表示名の解決には使われることがありますが、経路特定の主な仕組みではありません）。", "tracerouteの基本的な仕組みはSNMPポーリングを利用するものではないため誤りです。"], "category": "fundamentals"},
+        {"q": "NATにおける「インサイドローカルアドレス (Inside Local Address)」とは何を指しますか。", "type": "single", "options": ["内部ホストがインターネット上で認識されるグローバルアドレス", "内部ネットワークで使用されるプライベートアドレス", "外部ホストが持つグローバルアドレス", "外部ホストが内部から見えるプライベートアドレス"], "answer": [1], "explanation": "インサイドローカルアドレスは、NATを行う内部ネットワーク内のホストに割り当てられたアドレス（通常はプライベートIPアドレス）を指します。変換後に外部から見えるアドレスは「インサイドグローバルアドレス」です。", "optionExplanations": ["内部ホストが外部から認識されるグローバルなアドレスは「インサイドグローバルアドレス」と呼ばれるため誤りです。", "正解です。インサイドローカルアドレスは、内部ネットワークで使用されるプライベートアドレスを指します。", "外部ホストが持つグローバルアドレスは「アウトサイドグローバルアドレス」に該当するため誤りです。", "外部ホストが内部から見えるプライベートアドレスは「アウトサイドローカルアドレス」に該当するため誤りです。"], "category": "connectivity"},
+        {"q": "802.1X認証における3つの主要な構成要素のうち、認証を要求するエンドデバイス（PCなど）の役割を担うものはどれですか。", "type": "single", "options": ["オーセンティケータ (Authenticator)", "サプリカント (Supplicant)", "認証サーバ (Authentication Server)", "RADIUSクライアント"], "answer": [1], "explanation": "802.1Xでは、認証を要求するエンドデバイスを「サプリカント」、認証を中継するスイッチなどを「オーセンティケータ」、実際にIDを検証する「認証サーバ（RADIUSサーバなど）」の3要素で構成されます。", "optionExplanations": ["オーセンティケータは認証を中継するスイッチなどの役割であり、エンドデバイスの役割ではないため誤りです。", "正解です。サプリカントは認証を要求するエンドデバイス（PCなど）の役割です。", "認証サーバはID情報を検証するサーバ（RADIUSサーバなど）の役割であり、エンドデバイスの役割ではないため誤りです。", "RADIUSクライアントという呼び方は802.1Xの3要素の名称としては一般的ではないため誤りです。"], "category": "security"},
+        {"q": "OSPFのネイバーステート(隣接関係の状態遷移)のうち、ルータ間でリンクステートデータベース(LSDB)が完全に同期し、完全なアジャセンシーが確立された状態はどれですか。", "type": "single", "options": ["Init", "2-Way", "Exchange", "Full"], "answer": [3], "explanation": "OSPFのネイバーステートは Down → Init → 2-Way → ExStart → Exchange → Loading → Full の順に遷移します。「Full」状態になると、両ルータのリンクステートデータベースが完全に同期し、正常なアジャセンシーが確立された状態を意味します。", "optionExplanations": ["Initは一方向のHelloパケットのみを受信した初期状態であり、完全なアジャセンシーの状態ではないため誤りです。", "2-Wayは双方向の通信が確認された状態ですが、まだLSDBの同期は行われていないため誤りです。", "ExchangeはLSDBの情報を交換している途中の状態であり、完全に同期が完了した状態ではないため誤りです。", "正解です。FullはLSDBが完全に同期し、アジャセンシーが確立された状態です。"], "category": "connectivity"},
+        {"q": "トランクリンク上で不要なVLANのブロードキャストトラフィックを特定のリンクに送信しないように制限する機能を何と呼びますか。", "type": "single", "options": ["VLANプルーニング", "VLANホッピング", "ネイティブVLANの変更", "DTP (Dynamic Trunking Protocol)"], "answer": [0], "explanation": "VLANプルーニング（VTPプルーニングやswitchport trunk allowed vlanコマンドによる手動設定を含む）は、そのリンクの先に存在しないVLANのトラフィックをトランクリンク上で転送しないようにし、不要な帯域消費を抑制します。", "optionExplanations": ["正解です。VLANプルーニングは不要なVLANのトラフィックをトランクリンク上で制限する機能です。", "VLANホッピングは攻撃手法の名称であり、この問題の内容とは異なるため誤りです。", "ネイティブVLANの変更はタグなし転送されるVLANの変更を指す内容であり、この問題の内容とは異なるため誤りです。", "DTPはトランクの自動ネゴシエーションプロトコルであり、この問題の内容とは異なるため誤りです。"], "category": "connectivity"},
+        {"q": "VTP (VLAN Trunking Protocol) のモードのうち、自身のVLANデータベースを変更できず、他のスイッチから受信したVLAN情報のみを転送するモードはどれですか。", "type": "single", "options": ["Server", "Client", "Transparent", "Off"], "answer": [1], "explanation": "VTP Clientモードのスイッチは、VLANの作成・削除・変更を自身で行うことはできず、Serverモードのスイッチから受信したVLAN情報を学習し、他のスイッチへ転送します。", "optionExplanations": ["ServerモードはVLANデータベースを変更できるモードのため誤りです。", "正解です。ClientモードはVLANデータベースを自身で変更できず、受信したVLAN情報を転送します。", "TransparentモードはVTPドメインに参加せず、自身のVLANデータベースを独自に保持できるモードのため誤りです。", "OffモードはVTPメッセージの送受信・転送を行わないモードのため誤りです。"], "category": "access"},
+        {"q": "REST APIにおいて、既存のリソースを更新（または置換）するために使用される一般的なHTTPメソッドはどれですか。", "type": "single", "options": ["GET", "POST", "PUT", "DELETE"], "answer": [2], "explanation": "REST APIにおけるCRUD操作とHTTPメソッドの対応は、作成(Create)がPOST、読み取り(Read)がGET、更新(Update)がPUT（またはPATCH）、削除(Delete)がDELETEとなります。", "optionExplanations": ["GETはリソースの読み取りに使用されるメソッドのため誤りです。", "POSTは新規リソースの作成に使用されるメソッドのため誤りです。", "正解です。PUTは既存リソースの更新（置換）に使用されます。", "DELETEはリソースの削除に使用されるメソッドのため誤りです。"], "category": "automation"},
+        {"q": "QoSにおける「DSCP (Differentiated Services Code Point)」は、IPv4ヘッダのどのフィールド内に配置されますか。", "type": "single", "options": ["TTL", "Protocol", "ToS (Type of Service)", "Options"], "answer": [2], "explanation": "DSCPは、IPv4ヘッダのToS (Type of Service) フィールドの先頭6ビットを使用してトラフィックの優先度を定義します。", "optionExplanations": ["TTLはパケットの生存時間を管理するフィールドであり、DSCPとは異なるため誤りです。", "ProtocolフィールドはIPの上位プロトコル種別を示すフィールドであり、DSCPとは異なるため誤りです。", "正解です。DSCPはIPv4ヘッダのToSフィールドの先頭6ビットを使用します。", "OptionsフィールドはIPヘッダの拡張オプション用であり、DSCPとは異なるため誤りです。"], "category": "services"},
+        {"q": "AI（人工知能）および機械学習（ML）をネットワーク運用に適用した場合のメリットとして、最も適切なものはどれですか。", "type": "single", "options": ["ルーティングプロトコルを完全に不要にする", "ネットワークの遅延を物理的にゼロにする", "過去のトラフィックパターンから異常を検知し、予測的なトラブルシューティングを可能にする", "IPアドレスの枯渇問題を解決する"], "answer": [2], "explanation": "AI/MLをネットワークに導入することで、ベースラインからの逸脱（異常）の検知、将来のリソース不足の予測、アラートのノイズ削減など、高度で予測的な運用管理が可能になります（例：Cisco DNA Analytics and Assurance）。", "optionExplanations": ["AI/MLはルーティングプロトコルを不要にするものではないため誤りです。", "AI/MLはネットワークの物理的な遅延をゼロにするものではないため誤りです。", "正解です。AI/MLは過去のトラフィックパターンから異常を検知し、予測的なトラブルシューティングを可能にします。", "AI/MLはIPアドレス枯渇問題そのものを解決する技術ではないため誤りです。"], "category": "automation"},
+        {"q": "HSRPやVRRPとは異なり、複数のルータ間でアクティブ/スタンバイの単純な冗長化ではなく、トラフィックの負荷分散(ロードバランシング)も同時に行うことができるCisco独自のFHRPはどれですか。", "type": "single", "options": ["GLBP (Gateway Load Balancing Protocol)", "HSRP", "VRRP", "RSTP"], "answer": [0], "explanation": "GLBPはCisco独自のFHRPで、複数のルータが同時にアクティブなゲートウェイとして機能し、クライアントごとに異なる仮想MACアドレスを応答することでトラフィックの負荷分散を実現します。HSRPやVRRPは基本的に1台のみがアクティブ（フォワーディング）ルータとなります。", "optionExplanations": ["正解です。GLBPは複数のルータで同時に負荷分散を行うことができるCisco独自のFHRPです。", "HSRPは基本的に1台のアクティブルータのみがトラフィックを転送する方式のため誤りです。", "VRRPもHSRPと同様に基本的に1台のマスタールータのみがトラフィックを転送する方式のため誤りです。", "RSTPはレイヤ2のループ防止プロトコルであり、FHRPではないため誤りです。"], "category": "connectivity"},
+        {"q": "無線LANにおいて、複数のAPが同一のSSIDを共有し、単一の論理的なWLANとして機能する集合を何と呼びますか。", "type": "single", "options": ["BSS (Basic Service Set)", "ESS (Extended Service Set)", "IBSS (Independent Basic Service Set)", "DS (Distribution System)"], "answer": [1], "explanation": "ESS (Extended Service Set) は、複数のAP（複数のBSS）が同一のSSIDと有線バックボーンで接続され、クライアントがAP間をローミングしながら1つの広範なWLANとして利用できるようにする構成です。", "optionExplanations": ["BSSは単一のAPが提供するサービスセットを指す用語であり、複数APで構成される広範なWLANとは異なるため誤りです。", "正解です。ESSは複数のAPが同一SSIDと有線バックボーンで接続され、1つの広範なWLANとして機能する構成です。", "IBSSはAPを介さないアドホック接続のサービスセットを指す用語であり、この問題の内容とは異なるため誤りです。", "DSはAP同士を接続する分配システムを指す用語であり、サービスセットの種類を指す用語ではないため誤りです。"], "category": "fundamentals"},
+        {"q": "AAA (Authentication, Authorization, Accounting) フレームワークにおいて、「Accounting」の役割は何ですか。", "type": "single", "options": ["ユーザーが本人であることを確認する", "ユーザーがアクセスできるリソースを決定する", "ユーザーの操作履歴やリソース使用状況を記録する", "ユーザーのパスワードを暗号化する"], "answer": [2], "explanation": "Accounting（アカウンティング）は、認証されたユーザーがいつ、何に、どれだけアクセスしたかといった操作ログや使用状況を記録する機能です。課金や監査に利用されます。", "optionExplanations": ["本人確認を行うのはAuthentication(認証)の役割のため誤りです。", "アクセス可能なリソースを決定するのはAuthorization(認可)の役割のため誤りです。", "正解です。Accountingは、ユーザーの操作履歴やリソース使用状況を記録する役割です。", "パスワードの暗号化はAAAフレームワーク自体の役割ではないため誤りです。"], "category": "security"},
+        {"q": "ルータですべての宛先に一致するIPv4のデフォルトルートを設定するコマンドとして正しいものはどれですか。", "type": "single", "options": ["ip route 0.0.0.0 0.0.0.0 <ネクストホップ>", "ip route 255.255.255.255 0.0.0.0 <ネクストホップ>", "ip default-network 0.0.0.0", "network 0.0.0.0 area 0"], "answer": [0], "explanation": "IPv4のデフォルトスタティックルートは「ip route 0.0.0.0 0.0.0.0 <ネクストホップIPまたは出力インターフェース>」というコマンドで設定します。宛先ネットワーク・マスクともに0.0.0.0を指定することで、すべての宛先に一致します。", "optionExplanations": ["正解です。宛先ネットワークとマスクの両方に0.0.0.0を指定することで、すべての宛先に一致するデフォルトルートになります。", "宛先アドレスに255.255.255.255を指定すると特定のホストアドレスのみが対象となり、デフォルトルートの設定にはならないため誤りです。", "ip default-networkはクラスフルな環境で使われる古い形式のコマンドであり、一般的なデフォルトスタティックルートの設定方法ではないため誤りです。", "network 0.0.0.0 area 0はOSPFの設定コマンドであり、スタティックルートの設定ではないため誤りです。"], "category": "access"},
+        {"q": "DHCPスヌーピング (DHCP Snooping) において、「トラステッドポート (Trusted port)」として設定すべきインターフェースはどれですか。", "type": "single", "options": ["エンドユーザのPCが接続されるポート", "正規のDHCPサーバが接続されているポート", "IP電話が接続されているポート", "ゲストWi-Fiアクセスポイントが接続されているポート"], "answer": [1], "explanation": "DHCPスヌーピングでは、不正なDHCPサーバからの応答（DHCP Offerなど）を防ぐため、正規のDHCPサーバが接続されているポートやアップリンクポートのみをトラステッドポートとして設定し、それ以外をアントラステッドポートとします。", "optionExplanations": ["エンドユーザのPCが接続されるポートは、一般的にアントラステッドポートとして扱われるため誤りです。", "正解です。正規のDHCPサーバが接続されているポートはトラステッドポートとして設定します。", "IP電話が接続されるポートは一般的にアントラステッドポートとして扱われるため誤りです。", "ゲストAPが接続されるポートは一般的にアントラステッドポートとして扱われるため誤りです。"], "category": "security"},
+        {"q": "ルーティングプロトコルにおいてpassive-interfaceコマンドを設定する主な目的は何ですか。", "type": "single", "options": ["指定したインターフェースからルーティングアップデート（Helloパケットなど）を送信しないようにするため", "指定したインターフェースを完全にシャットダウン（無効化）するため", "指定したインターフェースのIPアドレスを固定し変更できないようにするため", "指定したインターフェースをEtherChannelのメンバーに追加するため"], "answer": [0], "explanation": "passive-interfaceコマンドは、そのインターフェースからルーティングプロトコルのアップデートやHelloパケットを送信しないように設定するコマンドです。これにより、ルータ自体はそのネットワークを経路広告に含めつつ、末端のLANなど不要な方向へ制御パケットが送信されるのを防げます。", "optionExplanations": ["正解です。passive-interfaceは指定インターフェースからのルーティングアップデート送信を抑制します。", "インターフェース自体をシャットダウンする効果はなく、通常のデータ通信は可能なため誤りです。", "IPアドレスの固定とは無関係な機能のため誤りです。", "EtherChannelへのインターフェース追加とは無関係な機能のため誤りです。"], "category": "access"},
+        {"q": "MACアドレステーブルに関する記述として正しいものはどれですか。", "type": "single", "options": ["ルータがパケットを転送するために使用する", "受信したフレームの宛先MACアドレスを記録して構築される", "受信したフレームの送信元MACアドレスを記録して構築される", "スイッチが再起動しても内容は保持される"], "answer": [2], "explanation": "スイッチは、受信したフレームの「送信元MACアドレス」と、それを受信したポートの情報をMACアドレステーブル（CAMテーブル）に学習・記録します。", "optionExplanations": ["MACアドレステーブルを使用するのはルータではなくスイッチのため誤りです。", "MACアドレステーブルは受信フレームの宛先MACアドレスではなく送信元MACアドレスを記録するため誤りです。", "正解です。スイッチは受信フレームの送信元MACアドレスとポート情報を学習・記録します。", "MACアドレステーブルは揮発性メモリ上に保持されるため、再起動すると内容は消失します。"], "category": "automation"},
+        {"q": "RSTP (Rapid Spanning Tree Protocol) におけるポート状態を2つ選択してください。", "type": "multiple", "options": ["リスニング (Listening)", "ラーニング (Learning)", "ブロッキング (Blocking)", "フォワーディング (Forwarding)", "ディスエーブル (Disabled)"], "answer": [1, 3], "explanation": "RSTP (IEEE 802.1w) のポート状態は「ディスカーディング」「ラーニング」「フォワーディング」の3つに集約されています。リスニングやブロッキングは従来のSTP (802.1D) の状態です。", "optionExplanations": ["リスニングは従来のSTP(802.1D)の状態であり、RSTPの状態ではないため誤りです。", "正解です。ラーニングはRSTPにおける3つのポート状態の一つです。", "ブロッキングは従来のSTP(802.1D)の状態であり、RSTPではディスカーディングに統合されているため誤りです。", "正解です。フォワーディングはRSTPにおける3つのポート状態の一つです。", "ディスエーブルは従来のSTP(802.1D)の状態であり、RSTPの状態ではないため誤りです。"], "category": "access"},
+        {"q": "ACL (アクセスコントロールリスト) の末尾に暗黙的に存在するルールとして正しいものはどれですか。", "type": "single", "options": ["permit ip any any", "deny ip any any", "permit icmp any any", "特に何も存在しない"], "answer": [1], "explanation": "全てのACLの末尾には、明示的に記述されていなくても「暗黙のdeny（deny ip any any）」が存在し、どの条件にも一致しなかったトラフィックはすべて拒否されます。", "optionExplanations": ["全許可(permit ip any any)が暗黙的に存在するわけではないため誤りです。", "正解です。すべてのACLの末尾には暗黙のdeny(deny ip any any)が存在します。", "ICMPのみを許可する暗黙のルールは存在しないため誤りです。", "暗黙のルールが「何も存在しない」というのは誤りで、暗黙のdenyが存在します。"], "category": "services"},
+        {"q": "NETCONFプロトコルとRESTCONFプロトコルの違いとして正しいものはどれですか。", "type": "single", "options": ["NETCONFはHTTPベース、RESTCONFはSSHベースである", "NETCONFはXMLのみ、RESTCONFはXMLとJSONの両方をサポートする", "NETCONFはステートレス、RESTCONFはステートフルである", "NETCONFはYANGモデルを使用しない"], "answer": [1], "explanation": "NETCONFはSSHをトランスポートとして使用し、データエンコーディングはXMLのみです。RESTCONFはHTTP/HTTPSを使用し、XMLとJSONの両方のエンコーディングをサポートします。どちらもYANGデータモデルを利用します。", "optionExplanations": ["NETCONFはSSHベース、RESTCONFはHTTPベースであり、この記述は逆のため誤りです。", "正解です。NETCONFはXMLのみ、RESTCONFはXMLとJSONの両方のエンコーディングをサポートします。", "NETCONF・RESTCONFともにHTTPやSSHを使った通信であり、この記述にあるようなステートレス/ステートフルの単純な対比は適切ではないため誤りです。", "NETCONFもYANGデータモデルを使用するため、この記述は誤りです。"], "category": "services"},
+        {"q": "Cisco ACI (Application Centric Infrastructure) の中心的な管理コントローラは何と呼ばれますか。", "type": "single", "options": ["WLC", "APIC (Application Policy Infrastructure Controller)", "DNA Center", "vManage"], "answer": [1], "explanation": "Cisco ACIは、APIC (Application Policy Infrastructure Controller) を中心コントローラとして、スパイン・リーフ構成のファブリック全体をポリシーベースで一元的に管理するSDNソリューションです。", "optionExplanations": ["WLCは無線LANコントローラであり、ACIのコントローラではないため誤りです。", "正解です。Cisco ACIの中心的なコントローラはAPICです。", "DNA CenterはSD-Access向けのコントローラであり、ACIのコントローラではないため誤りです。", "vManageはSD-WAN向けのコントローラであり、ACIのコントローラではないため誤りです。"], "category": "automation"},
+        {"q": "スイッチの片方のポートが100Mbps全二重(Full-Duplex)、対向のポートが100Mbps半二重(Half-Duplex)に設定されている「デュプレックスミスマッチ」が発生した場合の典型的な症状はどれですか。", "type": "single", "options": ["リンク自体が確立しない (Link down)", "リンクは確立するが、通信速度の低下やlate collision、CRCエラーが多発する", "IPアドレスが自動的に変更される", "VLAN情報が消失する"], "answer": [1], "explanation": "デュプレックスミスマッチが発生してもリンク自体は確立されることが多いですが、半二重側でコリジョンが発生しやすくなり、パフォーマンスの著しい低下やインターフェースエラーカウンタ（late collisionなど）の増加が典型的な症状として現れます。", "optionExplanations": ["デュプレックスミスマッチが発生してもリンク自体は確立されることが多いため、この記述は誤りです。", "正解です。デュプレックスミスマッチでは通信速度の低下やlate collision、CRCエラーの多発が典型的な症状です。", "デュプレックスミスマッチによってIPアドレスが自動的に変わることはないため誤りです。", "デュプレックスミスマッチによってVLAN情報が消失することはないため誤りです。"], "category": "services"},
+        {"q": "プライマリのスタティックルートがダウンした場合にのみ使用される、通常よりも高いAD値を設定したバックアップ用のスタティックルートを何と呼びますか。", "type": "single", "options": ["サミールート", "フローティングスタティックルート", "デフォルトルート", "リダンダントルート"], "answer": [1], "explanation": "フローティングスタティックルートは、意図的に高いAD値を設定することで通常時は使用されず、より低いADを持つプライマリルート（動的ルーティングなど）が失われた際にのみ有効化されるバックアップ経路です。", "optionExplanations": ["「サミールート」は経路集約(サマリー)を指す一般的な用語ではないため誤りです。", "正解です。フローティングスタティックルートは、高いAD値を設定しプライマリ経路喪失時のみ有効化されるバックアップ経路です。", "デフォルトルートは0.0.0.0/0の経路を指す用語であり、この問題の内容とは異なるため誤りです。", "「リダンダントルート」はこの文脈で使われる標準的な用語ではないため誤りです。"], "category": "connectivity"},
+        {"q": "スタティックルートの宛先ネクストホップとして、直接接続されていないIPアドレスを指定した場合、ルータがそのネクストホップへの経路を再度ルーティングテーブルで検索する動作を何と呼びますか。", "type": "single", "options": ["ロンゲストマッチ", "再帰的ルックアップ (Recursive Lookup)", "スプリットホライズン", "ルートリフレクション"], "answer": [1], "explanation": "ネクストホップIPアドレスとして直接接続されていないアドレスを指定した場合、ルータはそのネクストホップに到達するための経路を別途ルーティングテーブルから検索する必要があります。この動作を再帰的ルックアップと呼びます。出口インターフェースを直接指定した場合はこの検索は不要です。", "optionExplanations": ["ロンゲストマッチは複数の経路の中から最も長いプレフィックスの経路を選択する原則であり、この問題の内容とは異なるため誤りです。", "正解です。ネクストホップへの経路を再度検索する動作を再帰的ルックアップと呼びます。", "スプリットホライズンはルーティングループ防止のための技術であり、この問題の内容とは異なるため誤りです。", "ルートリフレクションはBGPで使われる用語であり、この問題の内容とは異なるため誤りです。"], "category": "connectivity"},
+        {"q": "GRE (Generic Routing Encapsulation) トンネルの特徴として正しいものはどれですか。", "type": "single", "options": ["デフォルトでペイロードを暗号化する", "IPだけでなくマルチキャストなど複数のプロトコルをカプセル化できる", "IPsecと同時に使用することはできない", "レイヤ2のプロトコルである"], "answer": [1], "explanation": "GREはCisco独自のトンネリングプロトコルで、IPマルチキャストやルーティングプロトコルの制御パケットなど、IPsec単体では扱えない多様なプロトコルをカプセル化して転送できます。暗号化機能自体は持たないため、暗号化にはIPsecと組み合わせて使用されることが多いです。", "optionExplanations": ["GREはデフォルトでは暗号化を行わないため誤りです。", "正解です。GREはIPマルチキャストなど複数のプロトコルをカプセル化して転送できます。", "GREはIPsecと組み合わせて使用されることも多く、同時使用できないという記述は誤りです。", "GREはレイヤ3のトンネリングプロトコルであり、レイヤ2のプロトコルではないため誤りです。"], "category": "security"},
+        {"q": "ルーティングにおいて経路集約（サマリー化）を行う際に、特に注意すべき点として正しいものはどれですか。", "type": "single", "options": ["集約すると常に経路情報の精度が向上する", "不連続なネットワーク（ディスコンティギュアスネットワーク）では、集約により意図しない通信断が発生する可能性がある", "経路集約はルータの処理負荷を必ず増加させる", "経路集約はOSPFでは利用できない機能である"], "answer": [1], "explanation": "経路集約はルーティングテーブルの経路数を減らし処理負荷を軽減できる一方、集約範囲に本来存在しないネットワークが含まれてしまう「ディスコンティギュアスネットワーク」の環境では、誤ったルーティング（ブラックホール）が発生する可能性があるため注意が必要です。", "optionExplanations": ["集約は経路数を減らす一方で経路の詳細情報は失われるため、精度が常に向上するとは言えず誤りです。", "正解です。不連続なネットワークでの集約は、実際には存在しない経路への誤転送（ブラックホール）を引き起こす可能性があります。", "経路集約はむしろルーティングテーブルのサイズを減らし、ルータの処理負荷を軽減する効果があるため誤りです。", "OSPFでもABRやASBRでの経路集約(summarization)機能が利用できるため、この記述は誤りです。"], "category": "fundamentals"},
+        {"generate": genLongestMatch},
+        {"q": "EtherChannelのネゴシエーションプロトコルにおいて、両端が「active」モードに設定されている場合の動作として正しいものはどれですか。", "type": "single", "options": ["EtherChannelは形成されない", "EtherChannelが形成される", "片側のポートのみがアップする", "STPによってブロックされる"], "answer": [1], "explanation": "LACPの「active」モードは、相手から要求されなくても自ら積極的にネゴシエーションを開始します。両端がactive、またはactiveとpassiveの組み合わせであればEtherChannelは形成されます。両端がpassiveの場合のみ形成されません。", "optionExplanations": ["active同士の組み合わせではEtherChannelは形成されるため、この記述は誤りです。", "正解です。LACPのactiveモード同士、またはactiveとpassiveの組み合わせであればEtherChannelは形成されます。", "active同士であれば両ポートともアップしEtherChannelが形成されるため、片側のみという記述は誤りです。", "正しくネゴシエーションが成立すればSTPによってブロックされることなく1つの論理リンクとして扱われるため誤りです。"], "category": "access"},
+        {"q": "標準ACL (Standard ACL) がパケットをフィルタリングする際に基準とする情報はどれですか。", "type": "single", "options": ["送信元IPアドレス", "宛先IPアドレス", "送信元および宛先IPアドレス", "送信元ポート番号"], "answer": [0], "explanation": "標準ACL (番号1〜99, 1300〜1999) は、送信元IPアドレスのみを基準としてトラフィックの許可・拒否を決定します。", "optionExplanations": ["正解です。標準ACLは送信元IPアドレスのみを基準にフィルタリングします。", "宛先IPアドレスを基準にできるのは拡張ACLのため誤りです。", "送信元・宛先両方を基準にできるのは拡張ACLのため誤りです。", "ポート番号を基準にできるのは拡張ACLのため誤りです。"], "category": "security"},
+        {"q": "レイヤ3スイッチにおいて、VLANに対してIPアドレスを割り当て、Inter-VLANルーティングを可能にする仮想インターフェースを何と呼びますか。", "type": "single", "options": ["ループバックインターフェース", "トンネルインターフェース", "SVI (Switched Virtual Interface)", "サブインターフェース"], "answer": [2], "explanation": "SVI (Switched Virtual Interface) は、レイヤ3スイッチ上でVLANごとに作成される仮想インターフェースで、そのVLANのデフォルトゲートウェイとして機能します。", "optionExplanations": ["ループバックインターフェースは仮想的な常時アップのインターフェースであり、VLANのゲートウェイ機能とは異なるため誤りです。", "トンネルインターフェースはトンネリング用の仮想インターフェースであり、VLANのゲートウェイ機能とは異なるため誤りです。", "正解です。SVIはレイヤ3スイッチ上でVLANごとに作成され、そのVLANのデフォルトゲートウェイとして機能します。", "サブインターフェースはルータの物理インターフェースを論理分割したものであり、レイヤ3スイッチのSVIとは異なるため誤りです。"], "category": "access"},
+        {"q": "OSPFにおいて、マルチアクセスネットワーク上でLSA (Link State Advertisement) の交換を効率化するために選出される役割を2つ選択してください。", "type": "multiple", "options": ["ABR (Area Border Router)", "DR (Designated Router)", "BDR (Backup Designated Router)", "ASBR (Autonomous System Boundary Router)", "スタブルータ"], "answer": [1, 2], "explanation": "イーサネットなどのマルチアクセスネットワークでは、全ルータ同士がフルメッシュでネイバー関係を結ぶとLSAの交換量が膨大になるため、DRとBDRを選出し、他のルータはDR/BDRとのみネイバー関係を確立します。", "optionExplanations": ["ABRは複数エリアを接続するルータの役割であり、マルチアクセスネットワーク上でのLSA交換効率化とは異なるため誤りです。", "正解です。DRはマルチアクセスネットワーク上でLSA交換を効率化するために選出されます。", "正解です。BDRはDR障害時に備えて選出される予備の役割です。", "ASBRは自律システム境界に位置するルータの役割であり、この問題の内容とは異なるため誤りです。", "スタブルータという役割は問われている選出プロセスとは異なるため誤りです。"], "category": "connectivity"},
+        {"q": "NTP (Network Time Protocol) の役割として正しいものはどれですか。", "type": "single", "options": ["ネットワーク機器のIPアドレスを自動的に割り当てる", "ネットワーク内の機器のシステムクロックを同期させる", "ホスト名をIPアドレスに変換する", "ネットワークトラフィックを監視し、統計情報を収集する"], "answer": [1], "explanation": "NTPはネットワーク上のデバイス間で時刻を同期するために使用されます。これにより、Syslogなどのタイムスタンプが正確になり、トラブルシューティングが容易になります。", "optionExplanations": ["IPアドレスの自動割り当てはDHCPの役割であり、NTPの役割ではないため誤りです。", "正解です。NTPはネットワーク機器間でシステムクロックを同期させるために使用されます。", "ホスト名からIPアドレスへの変換はDNSの役割であり、NTPの役割ではないため誤りです。", "トラフィックの監視・統計収集はSNMPなどの役割であり、NTPの役割ではないため誤りです。"], "category": "services"},
+        {"q": "VLSM (Variable Length Subnet Masking) を使用する主な目的は何ですか。", "type": "single", "options": ["すべてのサブネットに同一のホスト数を割り当てるため", "ネットワークの必要ホスト数に応じて異なるサイズのサブネットを作成し、IPアドレスを効率的に利用するため", "サブネットマスクを固定長にするため", "IPv6アドレスのみに適用されるため"], "answer": [1], "explanation": "VLSMは、拠点やセグメントごとに必要なホスト数が異なる場合に、それぞれに最適なサイズのサブネットマスクを個別に割り当てることで、IPアドレス空間の無駄を削減する手法です。", "optionExplanations": ["VLSMはむしろ異なるサイズのサブネットを作成する技術であり、同一ホスト数の割り当てが目的ではないため誤りです。", "正解です。VLSMは必要ホスト数に応じて異なるサイズのサブネットを作成し、IPアドレスを効率的に利用します。", "VLSMはサブネットマスク長を可変にする技術であり、固定長にするためのものではないため誤りです。", "VLSMはIPv4・IPv6問わず広く使われる概念のため誤りです。"], "category": "fundamentals"},
+        {"q": "設定管理ツールにおける「プッシュ型」と「プル型」の違いとして正しいものはどれですか。", "type": "single", "options": ["プッシュ型は管理対象ノードが自発的に設定を取得しにいく", "プル型は管理サーバが能動的に設定を配信する", "プッシュ型（例：Ansible）は管理サーバ側から設定を配信し、プル型（例：Puppet, Chef）はエージェントが定期的に設定を取得する", "プッシュ型とプル型に技術的な違いはない"], "answer": [2], "explanation": "Ansibleのようなプッシュ型ツールは管理サーバから対象ノードへ設定を能動的に配信します。PuppetやChefのようなプル型ツールは、対象ノード上のエージェントが定期的に管理サーバへ問い合わせて設定を取得します。", "optionExplanations": ["プッシュ型は管理サーバ側から能動的に配信する方式であり、この記述は逆のため誤りです。", "プル型はエージェントが能動的に取得しにいく方式であり、この記述は逆のため誤りです。", "正解です。Ansibleのようなプッシュ型は管理サーバから配信し、Puppet/Chefのようなプル型はエージェントが定期的に取得します。", "アーキテクチャとして明確な技術的違いがあるため、この記述は誤りです。"], "category": "services"},
+        {"q": "YANG (Yet Another Next Generation) の役割として最も適切なものはどれですか。", "type": "single", "options": ["ネットワーク機器の物理的な配線を自動化する", "ネットワーク設定や状態データの構造を定義するデータモデリング言語である", "パケットの暗号化アルゴリズムである", "無線LANのチャネル割り当てプロトコルである"], "answer": [1], "explanation": "YANGは、NETCONFやRESTCONFで使用される設定データや状態データの構造・階層・型を定義するためのデータモデリング言語です。", "optionExplanations": ["YANGは物理的な配線を自動化する技術ではないため誤りです。", "正解です。YANGはNETCONFやRESTCONFで使用される、設定・状態データの構造を定義するデータモデリング言語です。", "YANGは暗号化アルゴリズムではないため誤りです。", "YANGは無線LANのチャネル割り当てプロトコルではないため誤りです。"], "category": "services"},
+        {"q": "スイッチのポートをアクセスポートとして設定し、VLAN 10を割り当てるためのコマンド順序として正しいものはどれですか。", "type": "single", "options": ["switchport mode access -> switchport access vlan 10", "switchport access vlan 10 -> switchport mode trunk", "vlan 10 -> switchport mode access", "switchport mode dynamic desirable -> switchport access vlan 10"], "answer": [0], "explanation": "インターフェースコンフィギュレーションモードで、「switchport mode access」でアクセスポートに固定し、「switchport access vlan 10」でVLANを割り当てます。", "optionExplanations": ["正解です。switchport mode accessでアクセスポートに固定した後、switchport access vlan 10でVLANを割り当てます。", "2番目のコマンドがswitchport mode trunkとなっており、アクセスポートではなくトランクポートの設定になってしまうため誤りです。", "vlan 10コマンドはVLANデータベースの作成用であり、ポートへの割り当てコマンドではないため誤りです。", "switchport mode dynamic desirableはDTPによる自動ネゴシエーションの設定であり、アクセスポート固定の設定ではないため誤りです。"], "category": "access"},
+        {"q": "デフォルトゲートウェイが設定されていないPCから、別ネットワークのPCに対してpingを実行した場合、最初に発生する事象はどれですか。", "type": "single", "options": ["ARP要求をブロードキャストする", "ICMPエコー要求を送信する", "パケットを破棄し、「宛先ホスト到達不能」などのエラーを返す", "DNSサーバに問い合わせる"], "answer": [2], "explanation": "宛先が別ネットワークであり、かつデフォルトゲートウェイが設定されていない場合、PCはパケットをどこに送信してよいか判断できないため、パケットを破棄しユーザーにエラーを返します。ARP要求は送信されません。", "optionExplanations": ["宛先が別ネットワークでデフォルトゲートウェイが未設定の場合、ARP要求は送信されないため誤りです。", "宛先へのICMPエコー要求は、送信先が判断できないため実際には送信されないため誤りです。", "正解です。デフォルトゲートウェイがないと別ネットワーク宛のパケットの送信先が判断できず、PCはパケットを破棄しエラーを返します。", "この状況で自動的にDNSサーバへ問い合わせが行われるわけではないため誤りです。"], "category": "fundamentals"},
+        {"generate": genHsrpMac},
+        {"generate": genAclWildcard},
+        {"q": "シングルモード光ファイバ（SMF）の特性として正しいものはどれですか。", "type": "single", "options": ["マルチモード光ファイバよりもコア径が大きい", "光源として主にLEDを使用する", "長距離伝送に適している", "マルチモード光ファイバと比較してモード分散が発生しやすい"], "answer": [2], "explanation": "SMFはコア径が非常に小さく（約9μm）、レーザーを光源として使用します。モード分散が発生しないため、長距離かつ大容量のデータ伝送に適しています。", "optionExplanations": ["SMFはマルチモードよりコア径が小さい(約9μm)ため、この記述は誤りです。", "SMFは主にレーザーを光源として使用します。LEDが主という記述は誤りです。", "正解です。SMFはモード分散が発生せず、長距離・大容量伝送に適しています。", "SMFはモード分散が発生しにくい構造のため、この記述は誤りです。"], "category": "fundamentals"},
+        {"q": "IPsecにおいて、データの暗号化に加え、認証と完全性の保証も提供するプロトコルはどれですか。", "type": "single", "options": ["AH (Authentication Header)", "ESP (Encapsulating Security Payload)", "IKE (Internet Key Exchange)", "GRE"], "answer": [1], "explanation": "ESPはデータの暗号化に加え、認証と完全性の検証も提供します。AHは認証と完全性のみを提供し、暗号化は行いません。IKEは鍵交換に使用されるプロトコルです。", "optionExplanations": ["AHは認証と完全性のみを提供し、暗号化は行わないため誤りです。", "正解です。ESPはデータの暗号化に加え、認証と完全性の保証も提供します。", "IKEは鍵交換に使用されるプロトコルであり、データの暗号化自体を行うプロトコルではないため誤りです。", "GREはトンネリングプロトコルであり、暗号化や認証機能を持たないため誤りです。"], "category": "security"},
+        {"q": "IPv6スタティックルートを設定する際、ネクストホップとしてリンクローカルアドレスを指定する場合に必ず併記しなければならない情報は何ですか。", "type": "single", "options": ["MACアドレス", "メトリック値", "出力インターフェース", "マルチキャストアドレス"], "answer": [2], "explanation": "IPv6のリンクローカルアドレスは同一リンク内でのみ一意であるため、複数のインターフェースで同じネットワークプレフィックスを持つ可能性があります。そのため、出力インターフェースを明示する必要があります。", "optionExplanations": ["MACアドレスの指定はIPv6スタティックルートの設定には不要なため誤りです。", "メトリック値は経路選択に影響しますが、リンクローカルアドレス使用時に必須というわけではないため誤りです。", "正解です。リンクローカルアドレスは同一リンク内でのみ一意なため、出力インターフェースを明示する必要があります。", "マルチキャストアドレスの指定はIPv6スタティックルートの設定には不要なため誤りです。"], "category": "connectivity"},
+        {"q": "1台のルータの物理インターフェースを複数のサブインターフェースに分割し、それぞれに異なるVLANを割り当ててInter-VLANルーティングを行う構成を一般に何と呼びますか。", "type": "single", "options": ["ルータオンアスティック (Router on a Stick)", "スイッチドバーチャルインターフェース (SVI)", "ブリッジグループ", "マルチレイヤスイッチング"], "answer": [0], "explanation": "「Router on a Stick」は、1本の物理リンク（トランク）をルータとスイッチ間に接続し、サブインターフェースごとに802.1Qカプセル化とVLANを割り当てることで、複数VLAN間のルーティングを実現する構成です。", "optionExplanations": ["正解です。1本の物理リンクをサブインターフェースに分割し、各VLANに割り当てる構成をRouter on a Stickと呼びます。", "SVIはレイヤ3スイッチ上の仮想インターフェースを指す用語であり、ルータのサブインターフェース構成とは異なるため誤りです。", "ブリッジグループはインターフェースをブリッジ接続する仕組みであり、この構成とは異なるため誤りです。", "マルチレイヤスイッチングはレイヤ3スイッチによるルーティングを指す用語であり、ルータでの構成とは異なるため誤りです。"], "category": "access"},
+        {"q": "SNMPのバージョンのうち、ユーザーベースの認証と暗号化（メッセージの完全性、機密性）をサポートする最初のバージョンはどれですか。", "type": "single", "options": ["SNMPv1", "SNMPv2c", "SNMPv3", "SNMPv2u"], "answer": [2], "explanation": "SNMPv3は、それ以前のバージョン（コミュニティ文字列による平文の認証のみ）と異なり、ユーザーベースのセキュリティモデル(USM)により認証と暗号化の両方をサポートしています。", "optionExplanations": ["SNMPv1はコミュニティ文字列による平文の認証のみで、暗号化をサポートしないため誤りです。", "SNMPv2cもコミュニティ文字列ベースであり、暗号化をサポートしないため誤りです。", "正解です。SNMPv3はユーザーベースのセキュリティモデル(USM)により認証と暗号化の両方をサポートします。", "SNMPv2uは一般的に広く使われているバージョンではなく、この問題の正解には該当しないため誤りです。"], "category": "access"},
+        {"q": "IPv6ヘッダがIPv4ヘッダと比較して簡素化された結果、削除されたフィールドはどれですか。", "type": "single", "options": ["ホップリミット", "送信元アドレス", "チェックサム (ヘッダチェックサム)", "バージョン"], "answer": [2], "explanation": "IPv6ヘッダでは処理の高速化のため、IPv4に存在したヘッダチェックサムフィールドが削除されました。エラーチェックは上位層（TCPなど）やリンク層に委ねられています。", "optionExplanations": ["ホップリミットはIPv6ヘッダに存在するフィールドのため誤りです。", "送信元アドレスはIPv6ヘッダに存在するフィールドのため誤りです。", "正解です。IPv6ヘッダでは処理高速化のため、IPv4にあったヘッダチェックサムフィールドが削除されました。", "バージョンフィールドはIPv6ヘッダにも存在するフィールドのため誤りです。"], "category": "fundamentals"},
+        {"q": "ゼロトラストセキュリティモデルの基本的な考え方として適切なものはどれですか。", "type": "single", "options": ["内部ネットワークは安全であると見なし、外部からのアクセスのみを制限する", "ネットワークの境界を一度通過した通信はすべて許可する", "「決して信頼せず、常に検証する」を原則とし、全てのアクセス要求を認証・認可する", "パスワード認証を廃止し、IPアドレスのみでアクセス制御を行う"], "answer": [2], "explanation": "ゼロトラストは「何も信頼しない (Never Trust, Always Verify)」を前提とし、ネットワークの内外を問わず、全てのアクセスに対して厳密な認証と認可を求めるセキュリティモデルです。", "optionExplanations": ["内部ネットワークを安全とみなす考え方は境界防御型モデルであり、ゼロトラストの考え方とは逆のため誤りです。", "境界を通過した通信を無条件に許可する考え方はゼロトラストの考え方とは逆のため誤りです。", "正解です。ゼロトラストは「決して信頼せず、常に検証する」を原則とし、すべてのアクセスを認証・認可します。", "パスワード認証の廃止やIPアドレスのみでの制御は、ゼロトラストの厳密な認証・認可の考え方とは異なるため誤りです。"], "category": "security"},
+        {"q": "大規模データセンターでよく採用される、East-Westトラフィック（サーバ間通信）の効率化に優れたネットワークトポロジはどれですか。", "type": "single", "options": ["3層階層型 (コア・ディストリビューション・アクセス)", "スパイン・リーフ (Spine-Leaf) アーキテクチャ", "スター型トポロジ", "バス型トポロジ"], "answer": [1], "explanation": "スパイン・リーフアーキテクチャは、全てのリーフスイッチが全てのスパインスイッチに接続されるフルメッシュ構成をとり、どのリーフ間も常に一定のホップ数で到達できるため、データセンター内のサーバ間通信（East-West）に適しています。", "optionExplanations": ["3層階層型は主にキャンパスネットワーク向けの構成であり、East-Westトラフィックの効率化という点ではスパイン・リーフに劣るため誤りです。", "正解です。スパイン・リーフアーキテクチャは全リーフ・スパイン間がフルメッシュで接続され、サーバ間通信の効率化に優れています。", "スター型は中央集中型の一般的なトポロジであり、データセンターのEast-West通信最適化に特化した構成ではないため誤りです。", "バス型トポロジは現代の企業ネットワークではほとんど使われず、この問題の内容とは異なるため誤りです。"], "category": "automation"},
+        {"q": "拡張ACLを適用する際のベストプラクティスとして正しいものはどれですか。", "type": "single", "options": ["できるだけ宛先ネットワークに近いルータのインターフェースに適用する", "できるだけ送信元ネットワークに近いルータのインターフェースに適用する", "ネットワークのコア層のルータにすべて適用する", "ACLの最後に明示的に `permit ip any any` を追加する"], "answer": [1], "explanation": "拡張ACLは送信元と宛先の両方の情報を細かく指定できるため、不要なトラフィックがネットワーク帯域を消費するのを防ぐために、できるだけ送信元に近い場所で適用するのがベストプラクティスです。逆に標準ACLは宛先に近い場所に適用します。", "optionExplanations": ["宛先に近い場所に適用するのは標準ACLのベストプラクティスのため誤りです。", "正解です。拡張ACLは不要なトラフィックの帯域消費を防ぐため、送信元に近い場所に適用するのがベストプラクティスです。", "コア層への一律適用はパフォーマンスに影響しやすく、一般的なベストプラクティスではないため誤りです。", "ACLの最後にpermit ip any anyを追加すると、意図しない全許可の状態になり得るため、一般的なベストプラクティスではありません。"], "category": "security"},
+        {"q": "コリジョンドメインとブロードキャストドメインを共に分割できるネットワーク機器はどれですか。", "type": "single", "options": ["リピータハブ", "レイヤ2スイッチ", "ルータ", "ブリッジ"], "answer": [2], "explanation": "ルータはレイヤ3機器であり、各インターフェースが別々のブロードキャストドメインおよびコリジョンドメインとなります。レイヤ2スイッチはコリジョンドメインのみを分割します（VLAN設定時を除く）。", "optionExplanations": ["リピータハブはコリジョンドメインもブロードキャストドメインも分割しないため誤りです。", "レイヤ2スイッチはコリジョンドメインは分割しますが、ブロードキャストドメインは分割しない（VLAN未設定時）ため誤りです。", "正解です。ルータは各インターフェースが別々のコリジョンドメインおよびブロードキャストドメインとなります。", "ブリッジはコリジョンドメインを分割しますが、ブロードキャストドメインは分割しないため誤りです。"], "category": "fundamentals"},
+        {"q": "IEEE 802.1Qトランキングにおいて、タグ付けされずに転送されるVLANを何と呼びますか。", "type": "single", "options": ["デフォルトVLAN", "ネイティブVLAN", "マネジメントVLAN", "ボイスVLAN"], "answer": [1], "explanation": "ネイティブVLANは、802.1Qトランクリンク上でVLANタグを付加せずにフレームを送受信するためのVLANです。デフォルトではVLAN 1です。", "optionExplanations": ["デフォルトVLANはVLAN1を指す用語であり、タグなし転送の仕組み自体を指す用語ではないため誤りです。", "正解です。ネイティブVLANは802.1Qトランクでタグ付けされずに転送されるVLANです。", "マネジメントVLANはスイッチ管理用のVLANを指す用語のため誤りです。", "ボイスVLANはIP電話用のVLANを指す用語のため誤りです。"], "category": "access"},
+        {"generate": genRouteSummary},
+        {"q": "OSPFのデフォルトのインターフェースコスト計算式として正しいものはどれですか（デフォルトのreference bandwidthを使用する場合）。", "type": "single", "options": ["帯域幅(bps)の値をそのままコストとする", "10^8 ÷ 帯域幅(bps)", "帯域幅(bps) ÷ 10^8", "インターフェースの遅延(delay)の合計値"], "answer": [1], "explanation": "OSPFのデフォルトコストは「reference bandwidth（デフォルト10^8 = 100Mbps）÷ インターフェースの帯域幅(bps)」で計算されます。帯域幅が大きいほどコストは小さくなります。", "optionExplanations": ["帯域幅の値をそのまま使うのはEIGRPやRIPの考え方とは異なり、OSPFの計算式でもないため誤りです。", "正解です。OSPFのデフォルトコストは10^8(reference bandwidth)を帯域幅(bps)で割った値です。", "この式では帯域幅が大きいほどコストも大きくなってしまい、実際のOSPFの計算式とは逆のため誤りです。", "遅延(delay)の合計値を使用するのはEIGRPのメトリック計算の要素であり、OSPFのコスト計算式ではないため誤りです。"], "category": "access"},
+        {"q": "DHCPのDORAプロセスの正しい順番はどれですか。", "type": "single", "options": ["Discover -> Offer -> Request -> Acknowledge", "Discover -> Request -> Offer -> Acknowledge", "Offer -> Discover -> Request -> Acknowledge", "Request -> Offer -> Discover -> Acknowledge"], "answer": [0], "explanation": "DHCPによるIPアドレスの取得は、Discover (クライアントから探索) → Offer (サーバから提供) → Request (クライアントから要求) → Acknowledge (サーバから確認) の順で行われます。", "optionExplanations": ["正解です。DHCPはDiscover→Offer→Request→Acknowledgeの順で処理されます。", "Offerの前にRequestが来る順番は誤りです。", "最初にOfferが来る順番は誤りです（クライアントからのDiscoverが最初です）。", "最初にRequestが来る順番は誤りです（クライアントからのDiscoverが最初です）。"], "category": "services"},
+        {"q": "スイッチのCAM（MACアドレス）テーブルが溢れるように大量の偽MACアドレスを送りつけ、スイッチをハブのようにフラッディング状態にさせてトラフィックを盗聴する攻撃を何と呼びますか。", "type": "single", "options": ["MACアドレスフラッディング攻撃", "ARPスプーフィング", "DHCPスターベーション攻撃", "VLANホッピング攻撃"], "answer": [0], "explanation": "MACアドレスフラッディング攻撃は、大量の偽の送信元MACアドレスを送信してCAMテーブルの容量を超過させ、スイッチが宛先不明のフレームを全ポートにフラッディングするフェイルオープン状態に陥らせることで、本来届かないはずのトラフィックを盗聴する手法です。", "optionExplanations": ["正解です。MACアドレスフラッディング攻撃は大量の偽MACアドレスを送信し、CAMテーブルを溢れさせてフラッディング状態を引き起こします。", "ARPスプーフィングはARP応答を偽装する攻撃手法であり、CAMテーブルを溢れさせる攻撃とは異なるため誤りです。", "DHCPスターベーション攻撃はDHCPアドレスプールを枯渇させる攻撃手法であり、この問題の内容とは異なるため誤りです。", "VLANホッピング攻撃は本来アクセスできないVLANへ不正に侵入する攻撃手法であり、この問題の内容とは異なるため誤りです。"], "category": "access"},
+        {"q": "同一宛先ネットワークに対して、EIGRP（内部）とOSPFの両方から経路情報を受信した場合、Ciscoルータのルーティングテーブルにインストールされる経路はどちらですか。", "type": "single", "options": ["OSPF経由の経路（ADが小さいため）", "EIGRP経由の経路（ADが小さいため）", "両方の経路が同時にインストールされる", "先に学習した経路が優先される"], "answer": [1], "explanation": "アドミニストレーティブディスタンス(AD)は値が小さいほど優先されます。内部EIGRPのADは90、OSPFのADは110であるため、EIGRP経由の経路が優先されてルーティングテーブルにインストールされます。", "optionExplanations": ["OSPFのAD値(110)はEIGRPのAD値(90)より大きいため、この記述は誤りです。", "正解です。内部EIGRPのAD値(90)はOSPF(110)より小さいため、EIGRP経由の経路が優先されます。", "AD値が異なる場合、両方の経路が同時にインストールされることはないため誤りです。", "ルーティングテーブルへのインストールは学習順ではなくAD値によって決まるため誤りです。"], "category": "connectivity"},
+        {"q": "ルータにおいて、ルーティングテーブルに一致する経路が存在しない全てのトラフィックを転送するためのデフォルトルートを設定するスタティックルートコマンドとして正しいものはどれですか。", "type": "single", "options": ["ip route 0.0.0.0 0.0.0.0 <ネクストホップ>", "ip route 255.255.255.255 0.0.0.0 <ネクストホップ>", "ip default-route <ネクストホップ>", "ip route any any <ネクストホップ>"], "answer": [0], "explanation": "デフォルトルートは宛先ネットワークとサブネットマスクの両方を「0.0.0.0」に設定することで表され、他のどの経路にも一致しないトラフィックを一致させます。", "optionExplanations": ["正解です。宛先とマスクを共に0.0.0.0とすることで、他の経路に一致しない全てのトラフィックに一致するデフォルトルートになります。", "255.255.255.255はブロードキャストアドレスの表現であり、デフォルトルートの宛先指定としては誤りです。", "「ip default-route」という単独のコマンドは標準的なデフォルトルート設定コマンドではないため誤りです。", "「any any」という構文はIPv4スタティックルートのコマンドとして存在しないため誤りです。"], "category": "connectivity"},
+        {"q": "Syslogの重大度 (Severity Level) のうち、レベル0 (Emergency) に次いで重大なレベル1の名称は何ですか。", "type": "single", "options": ["Critical", "Alert", "Error", "Warning"], "answer": [1], "explanation": "Syslogのレベルは 0:Emergency, 1:Alert, 2:Critical, 3:Error, 4:Warning, 5:Notice, 6:Informational, 7:Debug となっています。", "optionExplanations": ["Criticalはレベル2に該当するため誤りです。", "正解です。レベル1はAlertです。", "Errorはレベル3に該当するため誤りです。", "Warningはレベル4に該当するため誤りです。"], "category": "services"},
+        {"q": "OSI参照モデルにおいて、ルータが動作するレイヤはどれですか。", "type": "single", "options": ["物理層", "データリンク層", "ネットワーク層", "トランスポート層"], "answer": [2], "explanation": "ルータはIPアドレスを使用してパケットのルーティングを行うため、OSI参照モデルのネットワーク層（レイヤ3）で動作します。", "optionExplanations": ["物理層はケーブルや信号などの伝送を扱う層で、ルーティングには関与しないため誤りです。", "データリンク層はMACアドレスを用いてフレームを転送する層（スイッチの層）のため誤りです。", "正解です。ルータはIPアドレスを用いてパケットを転送するネットワーク層（レイヤ3）で動作します。", "トランスポート層はTCP/UDPによる通信制御を行う層で、ルーティングとは直接関係がないため誤りです。"], "category": "fundamentals"},
+        {"q": "VRRP(Virtual Router Redundancy Protocol)とHSRPを比較した記述として正しいものはどれですか。", "type": "single", "options": ["VRRPはCisco独自のプロトコルであり、HSRPはオープン標準規格である", "VRRPはオープン標準規格(IETF)であり、アクティブルータの役割を持つルータは「Master」と呼ばれる", "VRRPとHSRPは全く同じ動作をする同一のプロトコルの別名称である", "VRRPはIPv4のみに対応し、IPv6では使用できない"], "answer": [1], "explanation": "VRRPはIETFによって標準化されたオープンなFHRPであり、マルチベンダー環境で利用できます。VRRPでは、HSRPの「Active」に相当する役割のルータを「Master」と呼びます。一方、HSRPはCisco独自のプロトコルです。", "optionExplanations": ["実際にはVRRPがオープン標準規格、HSRPがCisco独自のプロトコルであり、この記述は逆のため誤りです。", "正解です。VRRPはIETFの標準規格であり、アクティブルータに相当する役割は「Master」と呼ばれます。", "両者は類似した機能を持ちますが、規格の標準化団体や用語（Active/Standbyの代わりにMaster/Backupなど）が異なる別のプロトコルのため誤りです。", "VRRPv3ではIPv6にも対応しているため、この記述は誤りです。"], "category": "connectivity"},
+        {"q": "QoSの処理順序として一般的に正しいものはどれですか。", "type": "single", "options": ["キューイング -> 分類 -> マーキング", "分類 -> マーキング -> キューイング/スケジューリング", "マーキング -> キューイング -> 分類", "スケジューリング -> 分類 -> マーキング"], "answer": [1], "explanation": "QoSは通常、トラフィックを「分類 (Classification)」し、それに基づいて優先度を「マーキング (Marking)」した上で、出力時に「キューイング/スケジューリング」によって処理順序を制御するという流れで実施されます。", "optionExplanations": ["キューイングを最初に行う順番は一般的なQoS処理順序ではないため誤りです。", "正解です。一般的にQoSは「分類→マーキング→キューイング/スケジューリング」の順で処理されます。", "マーキングを最初に行う順番は一般的なQoS処理順序ではないため誤りです。", "スケジューリングを最初に行う順番は一般的なQoS処理順序ではないため誤りです。"], "category": "access"},
+        {"q": "OSPFのルータIDを決定する際の優先順位として正しいものはどれですか（router-idコマンドで明示的に設定されていない場合）。", "type": "single", "options": ["最も低いIPアドレスを持つループバックインターフェース", "最も高いIPアドレスを持つループバックインターフェース(なければ最も高いIPアドレスを持つ稼働中の物理インターフェース)", "ルータのホスト名から自動生成される値", "最初に設定されたインターフェースのIPアドレス"], "answer": [1], "explanation": "router-idコマンドで明示的に設定されていない場合、OSPFはまず最も高いIPアドレスを持つループバックインターフェースをルータIDとして使用します。ループバックインターフェースが存在しない場合は、最も高いIPアドレスを持つ稼働中の物理インターフェースが使用されます。", "optionExplanations": ["最も低いIPアドレスではなく、最も高いIPアドレスが優先されるため誤りです。", "正解です。ループバックインターフェースの中で最も高いIPアドレスが優先され、なければ物理インターフェースの中で最も高いIPアドレスが使用されます。", "ルータIDはホスト名から自動生成される値ではなく、IPアドレスを基に決定されるため誤りです。", "設定順序ではなく、IPアドレスの大小によって決定されるため誤りです。"], "category": "connectivity"},
+        {"q": "IEEE 802.11規格のうち、6GHz帯を新たに利用できるようになった規格はどれですか。", "type": "single", "options": ["802.11n", "802.11ac", "802.11ax (Wi-Fi 6E)", "802.11g"], "answer": [2], "explanation": "Wi-Fi 6E（802.11ax の拡張）は、従来の2.4GHz帯・5GHz帯に加えて新たに6GHz帯を利用できるようになった規格で、より多くのチャネルと低い混雑度を実現します。", "optionExplanations": ["802.11nは2.4GHz/5GHz帯を利用する規格であり、6GHz帯には対応していないため誤りです。", "802.11acは5GHz帯を利用する規格であり、6GHz帯には対応していないため誤りです。", "正解です。802.11ax(Wi-Fi 6E)により新たに6GHz帯が利用できるようになりました。", "802.11gは2.4GHz帯のみを利用する規格であり、6GHz帯には対応していないため誤りです。"], "category": "security"},
+        {"q": "ルータで「192.168.10.0/24」宛のスタティックルートを、ネクストホップIPアドレス「10.0.0.2」経由で設定するコマンドとして正しいものはどれですか。", "type": "single", "options": ["ip route 192.168.10.0 255.255.255.0 10.0.0.2", "ip route 10.0.0.2 255.255.255.0 192.168.10.0", "route ip 192.168.10.0 0.0.0.255 10.0.0.2", "ip static-route 192.168.10.0 255.255.255.0 10.0.0.2"], "answer": [0], "explanation": "IPv4スタティックルートの基本構文は「ip route <宛先ネットワーク> <サブネットマスク> <ネクストホップIPアドレスまたは出口インターフェース>」です。", "optionExplanations": ["正解です。宛先ネットワーク、サブネットマスク、ネクストホップの順で正しく指定されています。", "宛先ネットワークとネクストホップの順序が逆になっているため誤りです。", "「route ip」という構文は存在せず、また通常のスタティックルートではサブネットマスクを使用するため誤りです。", "「ip static-route」というコマンドは存在せず、正しくは「ip route」のため誤りです。"], "category": "connectivity"},
+        {"q": "スイッチポートセキュリティ (Port Security) において、違反時のアクション (violation mode) としてデフォルトで設定されているものはどれですか。", "type": "single", "options": ["protect", "restrict", "shutdown", "err-disable"], "answer": [2], "explanation": "ポートセキュリティのデフォルトの違反モードは「shutdown」です。未許可のMACアドレスを検知すると、ポートはエラーディセーブル (err-disable) 状態になり、シャットダウンされます。", "optionExplanations": ["protectはデフォルトの違反モードではないため誤りです。", "restrictはデフォルトの違反モードではないため誤りです。", "正解です。ポートセキュリティのデフォルトの違反モードはshutdownです。", "err-disableは違反モードの名称ではなく、shutdownモード適用時に遷移する状態の名称のため誤りです。"], "category": "security"},
+        {"q": "「show ip route」の出力において、コード「C」が示す経路の種類はどれですか。", "type": "single", "options": ["OSPFにより学習された経路", "直接接続 (Connected) された経路", "スタティックルート", "EIGRPにより学習された経路"], "answer": [1], "explanation": "「C」は直接接続 (Connected) されたネットワークを示します。その他、「O」はOSPF、「S」はStatic、「D」はEIGRPを表すコードです。", "optionExplanations": ["OSPFにより学習された経路は「O」で表示されるため誤りです。", "正解です。「C」は直接接続(Connected)された経路を示します。", "スタティックルートは「S」で表示されるため誤りです。", "EIGRPにより学習された経路は「D」で表示されるため誤りです。"], "category": "connectivity"},
+        {"q": "GLBP (Gateway Load Balancing Protocol) が、HSRPやVRRPと比較して持つ大きな特徴は何ですか。", "type": "single", "options": ["複数のルータを同時にアクティブとして扱い、トラフィックを負荷分散できる", "常に1台のルータのみがトラフィックを転送できる", "IPv6環境でのみ動作する", "スタティックルーティングと同時に使用できない"], "answer": [0], "explanation": "GLBPはCisco独自のFHRPで、AVG（Active Virtual Gateway）が複数のAVF（Active Virtual Forwarder）に異なる仮想MACアドレスを割り当てることで、複数のルータを同時にアクティブとして扱い、トラフィックの負荷分散を可能にします。", "optionExplanations": ["正解です。GLBPは複数のルータ(AVF)を同時にアクティブにしてトラフィックを負荷分散できる点が大きな特徴です。", "常に1台のみがアクティブになるのはHSRPの動作のため、GLBPの特徴としては誤りです。", "GLBPはIPv4環境でも広く使用されており、IPv6限定のプロトコルではないため誤りです。", "GLBPはスタティックルーティングとも併用可能であり、同時使用できないという記述は誤りです。"], "category": "security"},
+        {"q": "Ciscoルータの起動シーケンスにおいて、IOSイメージを読み込んだ後に実行される設定ファイルの読み込み順序として正しいものはどれですか。", "type": "single", "options": ["ROMのブートストラップ -> running-config -> startup-config", "ROMのブートストラップ -> IOSのロード -> startup-configの読み込み -> running-configとして適用", "startup-config -> IOSのロード -> ROM", "running-config -> startup-configへの保存 -> IOSのロード"], "answer": [1], "explanation": "ルータは起動時にROM内のブートストラッププログラムを実行し、IOSイメージをロードした後、NVRAMに保存されたstartup-configを読み込んでrunning-configとしてメモリ上に展開します。", "optionExplanations": ["running-configの読み込みがstartup-configより先という順番は誤りです。", "正解です。ROMのブートストラップ→IOSのロード→startup-configの読み込み→running-configとしての適用という順で処理されます。", "startup-configの読み込みがIOSロードより先という順番は誤りです。", "running-configをstartup-configに保存する操作は起動シーケンスとは異なる操作（copy run startなど）のため誤りです。"], "category": "fundamentals"},
+        {"generate": genHostCount},
+        {"q": "Cisco DNA Centerによるネットワーク管理において、ファブリック内のユーザーやデバイスのポリシーを一元的に制御するテクノロジーは何ですか。", "type": "single", "options": ["Cisco SD-WAN", "Cisco SD-Access", "Cisco ACI", "Cisco Meraki"], "answer": [1], "explanation": "Cisco SD-Access (Software-Defined Access) は、Cisco DNA Centerを使用してキャンパスネットワーク内の自動化、ポリシーベースのセグメンテーション、およびファブリックのプロビジョニングを提供するソリューションです。", "optionExplanations": ["Cisco SD-WANはWAN(拠点間広域網)の自動化ソリューションであり、キャンパスファブリックのものではないため誤りです。", "正解です。Cisco SD-Accessは、DNA Centerを用いてキャンパスネットワークのポリシーを一元制御します。", "Cisco ACIはデータセンター向けのSDNソリューションであり、キャンパスファブリック向けではないため誤りです。", "Cisco Merakiはクラウド管理型の製品群であり、この問題で問われているDNA Center連携のソリューションとは異なるため誤りです。"], "category": "automation"},
+        {"q": "WPA3で新たに導入された、オフライン辞書攻撃を防ぐための鍵交換プロトコルはどれですか。", "type": "single", "options": ["TKIP", "AES", "SAE (Simultaneous Authentication of Equals)", "PSK (Pre-Shared Key)"], "answer": [2], "explanation": "WPA3では、WPA2で使用されていたPSK (Pre-Shared Key) の代わりにSAE (Simultaneous Authentication of Equals) を採用し、辞書攻撃に対する耐性を高めています。", "optionExplanations": ["TKIPはWPA(第1世代)で使われた暗号化方式であり、SAEとは異なるため誤りです。", "AESは暗号化アルゴリズムであり、鍵交換プロトコルのSAEとは異なるため誤りです。", "正解です。WPA3ではPSKに代わりSAEが採用され、辞書攻撃への耐性が高まりました。", "PSKはWPA2までで使われていた方式であり、WPA3のSAEに置き換えられたため誤りです。"], "category": "security"},
+        {"q": "CDPと同様にネットワーク機器の検出に使用されるプロトコルで、CDPとは異なりベンダーに依存しないIEEE標準規格であるものはどれですか。", "type": "single", "options": ["CDP", "LLDP (Link Layer Discovery Protocol)", "ARP", "STP"], "answer": [1], "explanation": "LLDP (IEEE 802.1AB) は、CDPと同様に直接接続された機器の情報を検出・共有するプロトコルですが、CDPがCisco独自の規格であるのに対し、LLDPはベンダーに依存しないオープンな標準規格です。異なるベンダーの機器が混在する環境でも利用できます。", "optionExplanations": ["CDPはCisco独自のプロトコルであり、ベンダー非依存の標準規格ではないため誤りです。", "正解です。LLDPはIEEE 802.1ABで標準化された、ベンダーに依存しない機器検出プロトコルです。", "ARPはIPアドレスからMACアドレスを解決するプロトコルであり、機器検出用のプロトコルではないため誤りです。", "STPはループ防止プロトコルであり、機器検出用のプロトコルではないため誤りです。"], "category": "access"},
+        {"q": "以下のルート情報源のうち、Ciscoルータのデフォルトのアドミニストレーティブディスタンス(AD)値が最も小さい(最も優先される)ものはどれですか。", "type": "single", "options": ["直接接続(Connected)されたインターフェース", "スタティックルート", "内部EIGRP", "OSPF"], "answer": [0], "explanation": "デフォルトのAD値は、直接接続が0、スタティックルートが1、内部EIGRPが90、OSPFが110の順に大きくなります。AD値は小さいほど信頼性が高いとみなされ優先されるため、直接接続が最も優先されます。", "optionExplanations": ["正解です。直接接続されたインターフェースのAD値は0で、全ての情報源の中で最も優先されます。", "スタティックルートのデフォルトAD値は1であり、直接接続(0)よりは大きい値のため誤りです。", "内部EIGRPのデフォルトAD値は90であり、直接接続やスタティックルートより大きい値のため誤りです。", "OSPFのデフォルトAD値は110であり、この中では最も大きい値のため誤りです。"], "category": "connectivity"},
+        {"q": "IPv6のリンクローカルユニキャストアドレスのプレフィックスとして正しいものはどれですか。", "type": "single", "options": ["2000::/3", "FC00::/7", "FE80::/10", "FF00::/8"], "answer": [2], "explanation": "IPv6のリンクローカルユニキャストアドレスは「FE80::/10」から始まります。2000::/3はグローバルユニキャスト、FC00::/7はユニークローカル、FF00::/8はマルチキャストです。", "optionExplanations": ["2000::/3はグローバルユニキャストアドレスのプレフィックスのため誤りです。", "FC00::/7はユニークローカルアドレスのプレフィックスのため誤りです。", "正解です。FE80::/10はリンクローカルユニキャストアドレスのプレフィックスです。", "FF00::/8はマルチキャストアドレスのプレフィックスのため誤りです。"], "category": "fundamentals"},
+        {"q": "軽量AP（Lightweight AP）と対比される、単体で無線LAN機能の全てを完結させ、WLCを必要としないAPの動作モードは何ですか。", "type": "single", "options": ["ブリッジモード", "オートノマスモード (Autonomous mode)", "メッシュモード", "モニタモード"], "answer": [1], "explanation": "オートノマス（自律型）APは、WLCによる集中管理なしに、それ自体で無線LAN機能（認証、暗号化、RF管理など）を完結させて動作するモデルです。", "optionExplanations": ["ブリッジモードは無線区間同士や有線区間を接続するAPの動作モードであり、この問題の内容とは異なるため誤りです。", "正解です。オートノマスAPはWLCを必要とせず、単体で無線LAN機能を完結させます。", "メッシュモードは複数APが無線でバックホール接続するモードであり、この問題の内容とは異なるため誤りです。", "モニタモードは電波状況の監視に特化したモードであり、この問題の内容とは異なるため誤りです。"], "category": "security"},
+        {"q": "PortFastが設定されたポートに誤ってスイッチが接続され、BPDUを受信してしまった場合に、そのポートを自動的にエラーディセーブル状態にしてループを防止する機能はどれですか。", "type": "single", "options": ["BPDU Filter", "BPDU Guard", "Root Guard", "Loop Guard"], "answer": [1], "explanation": "BPDU Guardは、PortFastが有効なポートでBPDUを受信した場合、そのポートを即座にerr-disable状態にすることで、意図しないスイッチの接続によるループの発生を防止します。", "optionExplanations": ["BPDU Filterは受信・送信するBPDU自体を抑制する機能であり、ポートをエラーディセーブルにする機能ではないため誤りです。", "正解です。BPDU GuardはPortFast設定ポートがBPDUを受信した際、そのポートをエラーディセーブル状態にします。", "Root Guardはルートブリッジの位置を保護する機能であり、この問題の内容とは異なるため誤りです。", "Loop Guardは単方向リンク障害によるループを防ぐ機能であり、この問題の内容とは異なるため誤りです。"], "category": "fundamentals"},
+        {"q": "WLC (Wireless LAN Controller) を使用する集中管理型ワイヤレスネットワークアーキテクチャにおいて、APとWLC間の通信に使用されるプロトコルはどれですか。", "type": "single", "options": ["CAPWAP", "LWAPP", "SNMP", "RADIUS"], "answer": [0], "explanation": "軽量AP (LAP) とWLCの間の制御用・データ用トンネルの確立には、CAPWAP (Control and Provisioning of Wireless Access Points) プロトコルが使用されます。", "optionExplanations": ["正解です。軽量APとWLC間の制御・データトンネルの確立にはCAPWAPが使用されます。", "LWAPPはCAPWAPの前身にあたる古いプロトコルであり、現在標準として使われているのはCAPWAPのため誤りです。", "SNMPはネットワーク管理・監視のためのプロトコルであり、AP-WLC間の主通信プロトコルではないため誤りです。", "RADIUSは認証・認可・アカウンティングのためのプロトコルであり、AP-WLC間の主通信プロトコルではないため誤りです。"], "category": "access"},
+        {"q": "DNSレコードのうち、ホスト名からIPv4アドレスへの対応付けを行うレコードタイプはどれですか。", "type": "single", "options": ["AAAAレコード", "Aレコード", "MXレコード", "CNAMEレコード"], "answer": [1], "explanation": "Aレコードはホスト名とIPv4アドレスを対応付けます。IPv6アドレスに対応するのはAAAAレコードです。MXレコードはメールサーバ、CNAMEレコードは別名（エイリアス）を指定します。", "optionExplanations": ["AAAAレコードはIPv6アドレスへの対応付けを行うレコードのため誤りです。", "正解です。Aレコードはホスト名とIPv4アドレスを対応付けます。", "MXレコードはメールサーバの指定に使われるレコードのため誤りです。", "CNAMEレコードは別名（エイリアス）の指定に使われるレコードのため誤りです。"], "category": "fundamentals"},
+        {"q": "OSPFのスタブエリアの特徴として正しいものはどれですか。", "type": "single", "options": ["外部ルート（Type 5 LSA）がエリア内に流入しない", "バックボーンエリア（エリア0）自体をスタブエリアに設定できる", "スタブエリア内のルータはABRを経由せずに他エリアと直接通信する", "スタブエリアはBGPと連携している場合にのみ使用できる機能である"], "answer": [0], "explanation": "スタブエリアは、外部ルート（Type 5 LSA、AS外部LSA）がエリア内に流入しないように設定されたエリアで、ルーティングテーブルのサイズを削減できます。バックボーンエリア（エリア0）はスタブエリアに設定できません。", "optionExplanations": ["正解です。スタブエリアでは外部ルート（Type 5 LSA）の流入が抑制され、代わりにデフォルトルートが注入されます。", "バックボーンエリア（エリア0）はスタブエリアとして設定できないため誤りです。", "スタブエリア内のルータも他エリアとの通信にはABR(エリア境界ルータ)を経由する必要があるため誤りです。", "スタブエリアはBGPとの連携有無にかかわらず設定できる機能のため誤りです。"], "category": "fundamentals"},
+        {"q": "OSPFv2におけるデフォルトのアドミニストレーティブディスタンス (AD) 値はどれですか。", "type": "single", "options": ["90", "110", "115", "120"], "answer": [1], "explanation": "CiscoルータにおけるデフォルトのAD値は、OSPFが110、EIGRPが90、IS-ISが115、RIPが120、スタティックルートが1です。", "optionExplanations": ["90は内部EIGRPのデフォルトAD値のため誤りです。", "正解です。OSPFv2のデフォルトAD値は110です。", "115はIS-ISのデフォルトAD値のため誤りです。", "120はRIPのデフォルトAD値のため誤りです。"], "category": "connectivity"},
+        {"q": "内部ネットワークのプライベートIPアドレスとポート番号の組み合わせを、外部ネットワークの1つのパブリックIPアドレスと複数のポート番号に変換するNATの種類はどれですか。", "type": "single", "options": ["スタティックNAT", "ダイナミックNAT", "PAT (NAPT)", "NAT64"], "answer": [2], "explanation": "PAT (Port Address Translation)、またはNAPT (Network Address Port Translation) は、ポート番号を使用することで1つのパブリックIPアドレスを複数の内部デバイスで共有できるようにします。Ciscoでは「NAT Overload」とも呼ばれます。", "optionExplanations": ["スタティックNATは1対1の固定的な変換であり、複数ポートへの変換ではないため誤りです。", "ダイナミックNATはIPアドレスを1対1で動的に変換する方式であり、ポート単位の変換ではないため誤りです。", "正解です。PAT(NAPT)はポート番号を利用して1つのパブリックIPアドレスを複数の内部デバイスで共有します。", "NAT64はIPv6とIPv4の間の変換方式であり、この問題の内容とは異なるため誤りです。"], "category": "services"},
+        {"q": "SDN (Software-Defined Networking) アーキテクチャにおいて、コントロールプレーンとデータプレーン間の通信に使用されるインターフェースを何と呼びますか。", "type": "single", "options": ["ノースバウンドAPI", "サウスバウンドAPI", "イーストバウンドAPI", "ウェストバウンドAPI"], "answer": [1], "explanation": "SDNコントローラとネットワーク機器（データプレーン）間の通信には「サウスバウンドAPI」（OpenFlow、NETCONFなど）が使用されます。コントローラとアプリケーション間の通信は「ノースバウンドAPI」（REST APIなど）です。", "optionExplanations": ["ノースバウンドAPIはコントローラとアプリケーション間の通信に使われるため誤りです。", "正解です。サウスバウンドAPIはコントローラとネットワーク機器（データプレーン）間の通信に使われます。", "イーストバウンドAPIは一般的にコントローラ間の通信などで使われる用語であり、コントロールプレーンとデータプレーン間の通信ではないため誤りです。", "ウェストバウンドAPIも同様にコントローラ間通信などで使われる用語のため誤りです。"], "category": "automation"},
+        {"q": "インフラストラクチャをコードとして管理する (Infrastructure as Code) ツールである Ansible の特徴として正しいものはどれですか。", "type": "single", "options": ["管理対象ノードに専用のエージェントをインストールする必要がある", "プッシュ型のアーキテクチャを採用し、SSHを利用して通信する", "マニフェストファイルはXMLで記述される", "Cisco機器の管理には使用できない"], "answer": [1], "explanation": "Ansibleはエージェントレスであり、管理ノードからSSH経由で設定をプッシュするアーキテクチャを採用しています。設定ファイル（Playbook）はYAMLで記述されます。", "optionExplanations": ["Ansibleはエージェントレスで動作するため、専用エージェントのインストールは不要であり、この記述は誤りです。", "正解です。Ansibleはプッシュ型のアーキテクチャを採用し、SSH経由で設定を配信します。", "Ansibleの設定ファイル(Playbook)はYAMLで記述されるため、XMLという記述は誤りです。", "AnsibleはCisco機器の管理にも広く使用されているため、この記述は誤りです。"], "category": "automation"},
+        {"q": "STP (802.1D) においてルートブリッジを選出する際に、最初に比較される基準はどれですか。", "type": "single", "options": ["最小のブリッジID", "最小のブリッジプライオリティ", "最小のMACアドレス", "最小のポートコスト"], "answer": [1], "explanation": "ブリッジID（プライオリティ＋MACアドレス）のうち、まずプライオリティ値が比較され、最小のプライオリティを持つスイッチがルートブリッジとして選出されます。同値の場合は最小のMACアドレスで決定されます。", "optionExplanations": ["ブリッジIDはプライオリティとMACアドレスの組み合わせであり、最初に比較されるのはその中のプライオリティ部分のため、この表現は不正確です。", "正解です。ブリッジIDのうち、まずブリッジプライオリティが比較され、最小のものがルートブリッジ候補になります。", "MACアドレスはプライオリティが同値の場合に比較される基準であり、最初に比較される基準ではないため誤りです。", "ポートコストはルートブリッジ選出ではなく、ルートポートの選出で使われる基準のため誤りです。"], "category": "access"},
+        {"q": "OSPFにおいて「passive-interface」コマンドを特定のインターフェースに設定した場合の効果として正しいものはどれですか。", "type": "single", "options": ["そのインターフェースが属するネットワークの広告(アドバタイズ)を停止する", "そのインターフェースからのHelloパケットの送信を停止しつつ、そのネットワークの広告は継続する", "そのインターフェース自体を管理上シャットダウンする", "そのインターフェース上でOSPFのコストを最大値に設定する"], "answer": [1], "explanation": "passive-interfaceコマンドは、指定したインターフェース上でのOSPF Helloパケットの送受信を停止し、不要なネイバー関係の確立を防ぎます。一方で、そのインターフェースが属するネットワーク自体はOSPFの経路として引き続き広告されます。", "optionExplanations": ["ネットワークの広告自体は継続されるため、この記述は誤りです。", "正解です。Helloパケットの送受信は停止されますが、そのネットワークの広告(アドバタイズ)は継続されます。", "インターフェース自体をシャットダウンする機能ではないため誤りです。", "コストの変更を行う機能ではないため誤りです。"], "category": "connectivity"},
+        {"q": "IPv4におけるプライベートIPアドレスの範囲として正しいものを2つ選択してください。", "type": "multiple", "options": ["10.0.0.0 ～ 10.255.255.255", "127.0.0.0 ～ 127.255.255.255", "192.168.0.0 ～ 192.168.255.255", "169.254.0.0 ～ 169.254.255.255", "224.0.0.0 ～ 239.255.255.255"], "answer": [0, 2], "explanation": "RFC1918で定義されているプライベートIPアドレスは、10.0.0.0/8、172.16.0.0/12、192.168.0.0/16の3種類です。127.0.0.0/8はループバック、169.254.0.0/16はリンクローカル、224.0.0.0/4はマルチキャストのアドレスであり、いずれもプライベートIPアドレスではありません。", "optionExplanations": ["正解です。10.0.0.0/8はRFC1918で定義されたプライベートIPアドレスの範囲です。", "127.0.0.0/8はループバックアドレスの範囲であり、プライベートIPアドレスではないため誤りです。", "正解です。192.168.0.0/16はRFC1918で定義されたプライベートIPアドレスの範囲です。", "169.254.0.0/16はAPIPAで使われるリンクローカルアドレスであり、プライベートIPアドレスではないため誤りです。", "224.0.0.0/4はマルチキャストアドレスの範囲であり、プライベートIPアドレスではないため誤りです。"], "category": "fundamentals"},
+        {"generate": genOspfWildcard},
+        {"q": "OSPFのネイバーステートのうち、隣接ルータ間でリンクステートデータベース(LSDB)の同期が完了した最終的な安定状態はどれですか。", "type": "single", "options": ["Init", "2-Way", "ExStart", "Full"], "answer": [3], "explanation": "OSPFのネイバー関係はDown→Init→2-Way→ExStart→Exchange→Loading→Fullという順で遷移し、Full状態になるとLSDBが完全に同期し、経路計算が可能になります。", "optionExplanations": ["Initはネイバーから一方向でHelloを受信した初期段階の状態であり、まだLSDB同期は行われていないため誤りです。", "2-Wayは双方向でHelloの交換が確認できた状態であり、まだLSDBの交換は行われていないため誤りです。", "ExStartはマスター/スレーブの関係やDBDの初期シーケンス番号を決定する段階であり、まだLSDB交換は完了していないため誤りです。", "正解です。FullはLSDBの同期が完全に完了した最終的な安定状態です。"], "category": "access"}
+    ];
+    let activeQuestions = [];
+    let activeCategoryProgress = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    const categoryOrder = ["fundamentals", "access", "connectivity", "services", "security", "automation"];
+    const categoryNames = {
+        fundamentals: "1. ネットワーク基礎",
+        access: "2. ネットワークアクセス",
+        connectivity: "3. IP接続性",
+        services: "4. IPサービス",
+        security: "5. セキュリティ基礎",
+        automation: "6. 自動化とプログラマビリティ"
+    };
+    const categoryStats = {};
+    Object.keys(categoryNames).forEach(key => {
+        categoryStats[key] = { correct: 0, total: 0 };
+    });
+
+    const questionCounterEl = document.getElementById('question-counter');
+    const scoreCounterEl = document.getElementById('score-counter');
+    const categoryProgressEl = document.getElementById('category-progress-label');
+    const progressBarEl = document.getElementById('progress-bar');
+    const questionTextEl = document.getElementById('question-text');
+    const multipleHintEl = document.getElementById('multiple-hint');
+    const optionsContainerEl = document.getElementById('options-container');
+    const submitBtn = document.getElementById('submit-btn');
+    const backBtn = document.getElementById('back-btn');
+    const feedbackArea = document.getElementById('feedback-area');
+    const feedbackTitle = document.getElementById('feedback-title');
+    const explanationText = document.getElementById('explanation-text');
+    const nextBtnContainer = document.getElementById('next-btn-container');
+    const nextBtn = document.getElementById('next-btn');
+    const SAVE_KEY = 'ccnaQuizProgress';
+    let displayOrders = [];
+    let answeredLog = [];
+
+    function setupActiveQuestions() {
+        const categoryTotals = {};
+        activeQuestions.forEach(q => {
+            categoryTotals[q.category] = (categoryTotals[q.category] || 0) + 1;
+        });
+        const categoryRunningCount = {};
+        activeCategoryProgress = activeQuestions.map(q => {
+            categoryRunningCount[q.category] = (categoryRunningCount[q.category] || 0) + 1;
+            return { x: categoryRunningCount[q.category], y: categoryTotals[q.category] };
+        });
+        displayOrders = activeQuestions.map(q => shuffleArray(q.options.map((_, index) => index)));
+        answeredLog = activeQuestions.map(() => null);
+    }
+
+    function startQuiz(mode) {
+        activeQuestions = questions.map(item => typeof item.generate === 'function' ? item.generate() : item);
+        if (mode === 'random') {
+            activeQuestions = shuffleArray(activeQuestions);
+        } else if (mode === 'category') {
+            activeQuestions = activeQuestions
+                .map((item, originalIndex) => ({ item, originalIndex }))
+                .sort((a, b) => {
+                    const diff = categoryOrder.indexOf(a.item.category) - categoryOrder.indexOf(b.item.category);
+                    return diff !== 0 ? diff : a.originalIndex - b.originalIndex;
+                })
+                .map(entry => entry.item);
+        }
+        setupActiveQuestions();
+
+        currentQuestionIndex = 0;
+        score = 0;
+        Object.keys(categoryStats).forEach(key => {
+            categoryStats[key] = { correct: 0, total: 0 };
+        });
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    function renderOptions(q, answeredEntry) {
+        optionsContainerEl.innerHTML = '';
+        const order = displayOrders[currentQuestionIndex];
+        order.forEach(originalIndex => {
+            const label = document.createElement('label');
+            label.className = 'option-label';
+            label.id = `label-opt-${originalIndex}`;
+
+            const input = document.createElement('input');
+            input.type = q.type === 'multiple' ? 'checkbox' : 'radio';
+            input.name = 'option';
+            input.value = originalIndex;
+            if (answeredEntry) {
+                input.disabled = true;
+                if (answeredEntry.selected.includes(originalIndex)) input.checked = true;
+            }
+
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(q.options[originalIndex]));
+            optionsContainerEl.appendChild(label);
+
+            if (answeredEntry) {
+                if (q.answer.includes(originalIndex)) {
+                    label.classList.add('is-correct');
+                } else if (answeredEntry.selected.includes(originalIndex)) {
+                    label.classList.add('is-wrong');
+                }
+                if (q.optionExplanations && q.optionExplanations[originalIndex]) {
+                    const expDiv = document.createElement('div');
+                    expDiv.className = 'option-explanation';
+                    expDiv.classList.add(q.answer.includes(originalIndex) ? 'option-explanation-correct' : 'option-explanation-wrong');
+                    expDiv.textContent = q.optionExplanations[originalIndex];
+                    label.appendChild(expDiv);
+                }
+            }
+        });
+    }
+
+    function loadQuestion() {
+        const q = activeQuestions[currentQuestionIndex];
+
+        questionCounterEl.textContent = `Question ${currentQuestionIndex + 1} of ${activeQuestions.length}`;
+        scoreCounterEl.textContent = `Score: ${score}`;
+        const catProgress = activeCategoryProgress[currentQuestionIndex];
+        categoryProgressEl.textContent = `カテゴリ：${categoryNames[q.category]} (${catProgress.x} of ${catProgress.y})`;
+        const progress = (currentQuestionIndex / activeQuestions.length) * 100;
+        progressBarEl.style.width = `${progress}%`;
+
+        questionTextEl.textContent = q.q;
+
+        if (q.type === 'multiple') {
+            multipleHintEl.style.display = 'block';
+            multipleHintEl.textContent = `※複数選択問題です。正しいものを ${q.answer.length} つ選んでください。`;
+        } else {
+            multipleHintEl.style.display = 'none';
+        }
+
+        backBtn.style.display = currentQuestionIndex > 0 ? 'inline-block' : 'none';
+
+        const answeredEntry = answeredLog[currentQuestionIndex];
+        renderOptions(q, answeredEntry);
+
+        if (answeredEntry) {
+            submitBtn.style.display = 'none';
+            feedbackArea.className = 'feedback-area ' + (answeredEntry.isCorrect ? 'correct' : 'wrong');
+            feedbackTitle.textContent = answeredEntry.isCorrect ? '正解！' : '不正解';
+            explanationText.textContent = q.explanation;
+            nextBtnContainer.style.display = 'block';
+            nextBtn.textContent = currentQuestionIndex === activeQuestions.length - 1 ? '結果を見る' : '次の問題へ';
+        } else {
+            submitBtn.style.display = 'inline-block';
+            submitBtn.disabled = false;
+            feedbackArea.className = 'feedback-area';
+            nextBtnContainer.style.display = 'none';
+        }
+    }
+
+    function checkAnswer() {
+        const q = activeQuestions[currentQuestionIndex];
+        const selectedInputs = document.querySelectorAll('input[name="option"]:checked');
+
+        if (selectedInputs.length === 0) {
+            alert('選択肢を選んでください。');
+            return;
+        }
+
+        const selectedValues = Array.from(selectedInputs).map(input => parseInt(input.value)).sort((a, b) => a - b);
+        const correctAnswers = [...q.answer].sort((a, b) => a - b);
+        const isCorrect = JSON.stringify(selectedValues) === JSON.stringify(correctAnswers);
+
+        answeredLog[currentQuestionIndex] = { selected: selectedValues, isCorrect };
+
+        if (isCorrect) {
+            score++;
+        }
+        if (q.category && categoryStats[q.category]) {
+            categoryStats[q.category].total++;
+            if (isCorrect) categoryStats[q.category].correct++;
+        }
+
+        loadQuestion();
+    }
+
+    function prevQuestion() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            loadQuestion();
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < activeQuestions.length - 1) {
+            currentQuestionIndex++;
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function goHome() {
+        document.getElementById('home-modal').classList.add('active');
+    }
+
+    function handleHomeChoice(choice) {
+        document.getElementById('home-modal').classList.remove('active');
+        if (choice === 'cancel') {
+            return;
+        }
+        if (choice === 'continue') {
+            saveProgress();
+        } else if (choice === 'reset') {
+            clearSavedProgress();
+        }
+        document.getElementById('quiz-container').style.display = 'none';
+        document.getElementById('start-screen').style.display = 'block';
+        updateHomeButtons();
+    }
+
+    function saveProgress() {
+        const state = { activeQuestions, activeCategoryProgress, displayOrders, answeredLog, currentQuestionIndex, score, categoryStats };
+        localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+    }
+
+    function clearSavedProgress() {
+        localStorage.removeItem(SAVE_KEY);
+    }
+
+    function loadSavedProgress() {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (!raw) return false;
+        try {
+            const state = JSON.parse(raw);
+            activeQuestions = state.activeQuestions;
+            activeCategoryProgress = state.activeCategoryProgress;
+            displayOrders = state.displayOrders;
+            answeredLog = state.answeredLog;
+            currentQuestionIndex = state.currentQuestionIndex;
+            score = state.score;
+            Object.keys(categoryStats).forEach(key => {
+                categoryStats[key] = (state.categoryStats && state.categoryStats[key]) || { correct: 0, total: 0 };
+            });
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function resumeQuiz() {
+        if (!loadSavedProgress()) {
+            alert('保存された回答が見つかりませんでした。');
+            updateHomeButtons();
+            return;
+        }
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    function resetSavedProgress() {
+        if (confirm('保存されている回答をリセットします。よろしいですか？')) {
+            clearSavedProgress();
+            updateHomeButtons();
+        }
+    }
+
+    function updateHomeButtons() {
+        const hasSaved = !!localStorage.getItem(SAVE_KEY);
+        document.getElementById('continue-btn').style.display = hasSaved ? 'inline-block' : 'none';
+        document.getElementById('reset-btn').style.display = hasSaved ? 'inline-block' : 'none';
+    }
+
+    function showResult() {
+        clearSavedProgress();
+        updateHomeButtons();
+        document.getElementById('quiz-container').style.display = 'none';
+        const resultContainer = document.getElementById('result-container');
+        resultContainer.style.display = 'block';
+
+        document.getElementById('final-score').textContent = `${score} / ${activeQuestions.length}`;
+        const percentage = (score / activeQuestions.length) * 100;
+        
+        let msg = "";
+        if (percentage >= 80) {
+            msg = "素晴らしい！合格ラインに達しています。この調子で学習を続けてください。";
+        } else if (percentage >= 60) {
+            msg = "あと一息です。不正解だった問題の解説をよく復習しましょう。";
+        } else {
+            msg = "基礎をもう一度確認することをお勧めします。解説を読み直して再挑戦してください。";
+        }
+        document.getElementById('result-message').textContent = msg;
+
+        const breakdownEl = document.getElementById('category-breakdown');
+        let breakdownHtml = '<h3>カテゴリ別 正答率</h3>';
+        Object.keys(categoryNames).forEach(key => {
+            const stat = categoryStats[key];
+            if (!stat || stat.total === 0) return;
+            const pct = Math.round((stat.correct / stat.total) * 100);
+            let level = 'low';
+            if (pct >= 70) level = 'high';
+            else if (pct >= 40) level = 'mid';
+            breakdownHtml += `
+                <div class="category-row">
+                    <div class="category-row-header">
+                        <span class="category-row-name">${categoryNames[key]}</span>
+                        <span class="category-row-score">${stat.correct} / ${stat.total} (${pct}%)</span>
+                    </div>
+                    <div class="category-bar-bg">
+                        <div class="category-bar-fill ${level}" style="width: ${pct}%;"></div>
+                    </div>
+                </div>`;
+        });
+        breakdownEl.innerHTML = breakdownHtml;
+    }
+
+    window.addEventListener('beforeunload', function (e) {
+        const quizVisible = document.getElementById('quiz-container').style.display !== 'none';
+        if (quizVisible) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+
+    updateHomeButtons();
+</script>
+
+</body>
+</html>
